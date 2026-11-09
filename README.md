@@ -49,7 +49,7 @@ ecc-install
 - `--json`: emit machine-readable JSON output
 - `--force`: overwrite pre-existing unmanaged files with differing contents
 - `--list`: list all curated components in the repository
-- `--uninstall`: remove unchanged files tracked in `install-state.json`
+- `--uninstall`: remove unchanged files tracked in `curated-state.json`
 
 ## Aether ECC — Liquid Glass Mobile-First PWA Dashboard
 

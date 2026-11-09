@@ -56,7 +56,7 @@ Options:
   --dry-run          Preview planned operations without writing files
   --json             Print machine-readable JSON output
   --list             List all available skills, agents, commands, and legacy shims
-  --uninstall        Remove unchanged ECC-managed files tracked in install-state.json
+  --uninstall        Remove unchanged ECC-managed files tracked in curated-state.json
   -h, --help         Show this help text
 `;
 }

@@ -4,8 +4,8 @@ This repository packages a curated subset of **Everything Claude Code (ECC)** al
 
 ## Installed Agent Assets
 
-- **Arena / Cross-Agent directory**: `.agents/` (`skills/`, `agents/`, `workflows/`, tracked in `.agents/ecc-install-state.json`)
-- **Claude Project directory**: `.claude/` (`skills/`, `agents/`, `commands/`, tracked in `.claude/ecc/install-state.json`)
+- **Arena / Cross-Agent directory**: `.agents/` (`skills/`, `agents/`, `workflows/`, tracked in `.agents/ecc-curated-state.json`)
+- **Claude Project directory**: `.claude/` (`skills/`, `agents/`, `commands/`, tracked in `.claude/ecc/curated-state.json`)
 - **Curated Canonical Source**: `skills/` (21), `agents/` (9), `commands/` (30), `legacy-command-shims/commands/` (6)
 
 ## Key Commands
