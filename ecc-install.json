@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "target": "claude",
+  "options": {
+    "source": "affaan-m/ECC",
+    "upstreamVersion": "2.2.3",
+    "includeCanonicalForShims": true,
+    "installShims": true,
+    "skills": [
+      "agent-harness-construction",
+      "api-design",
+      "autonomous-loops",
+      "blueprint",
+      "coding-standards",
+      "configure-ecc",
+      "continuous-agent-loop",
+      "continuous-learning",
+      "continuous-learning-v2",
+      "database-migrations",
+      "deployment-patterns",
+      "eval-harness",
+      "frontend-patterns",
+      "liquid-glass-design",
+      "prompt-optimizer",
+      "strategic-compact",
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "canonicalSkills": [
+      "autonomous-agent-harness",
+      "dmux-workflows",
+      "e2e-testing"
+    ],
+    "agents": [
+      "architect",
+      "build-error-resolver",
+      "code-reviewer",
+      "doc-updater",
+      "e2e-runner",
+      "harness-optimizer",
+      "loop-operator",
+      "planner",
+      "refactor-cleaner"
+    ],
+    "commands": [
+      "build-fix",
+      "checkpoint",
+      "code-review",
+      "evolve",
+      "harness-audit",
+      "instinct-export",
+      "instinct-import",
+      "instinct-status",
+      "learn",
+      "learn-eval",
+      "loop-start",
+      "loop-status",
+      "model-route",
+      "multi-backend",
+      "multi-execute",
+      "multi-frontend",
+      "multi-plan",
+      "multi-workflow",
+      "plan",
+      "projects",
+      "promote",
+      "refactor-clean",
+      "resume-session",
+      "save-session",
+      "sessions",
+      "setup-pm",
+      "skill-create",
+      "test-coverage",
+      "update-codemaps",
+      "update-docs"
+    ],
+    "legacyShims": {
+      "e2e": [
+        "e2e-testing"
+      ],
+      "eval": [
+        "eval-harness"
+      ],
+      "orchestrate": [
+        "dmux-workflows",
+        "autonomous-agent-harness"
+      ],
+      "prompt-optimize": [
+        "prompt-optimizer"
+      ],
+      "tdd": [
+        "tdd-workflow"
+      ],
+      "verify": [
+        "verification-loop"
+      ]
+    }
+  }
+}
