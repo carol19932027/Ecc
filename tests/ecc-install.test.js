@@ -7,15 +7,24 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
+const { PassThrough } = require('node:stream');
+
 const {
+  CANONICAL_ALL_TARGETS,
   DEFAULT_REPO_ROOT,
+  GUIDED_PROFILES,
+  applyGuidedPlan,
   applyInstallPlan,
+  createGuidedPlan,
   createInstallPlan,
   discoverCatalog,
+  getGuidedProfile,
+  listGuidedProfiles,
   parseArgs,
   resolveTargetSpec,
   uninstallFromTarget,
 } = require('../lib/ecc-installer');
+const { runGuidedInstall } = require('../lib/guided-wizard');
 
 const USER_REQUESTED_63 = [
   'agent-harness-construction',
@@ -336,4 +345,234 @@ test('CLI supports --list --json, --dry-run --json, and rejects unknown or unsaf
     () => execFileSync(process.execPath, [binPath, '--skills', '../evil'], { stdio: 'pipe' }),
     (err) => err.status === 1 && /Invalid component id/.test(err.stderr.toString())
   );
+});
+
+test('parseArgs parses guided flags, multi-targets, aliases, and profiles', () => {
+  const parsed = parseArgs([
+    'node', 'ecc-install',
+    '-g',
+    '--targets', 'arena,cursor',
+    '--harness', 'gemini',
+    '--profile=core',
+    '-y',
+  ]);
+  assert.equal(parsed.guided, true);
+  assert.deepEqual(parsed.targets, ['arena', 'cursor', 'gemini']);
+  assert.equal(parsed.target, 'gemini');
+  assert.equal(parsed.profile, 'core');
+  assert.equal(parsed.yes, true);
+
+  const allTargetsParsed = parseArgs(['node', 'ecc-install', '--guided', '--all-harnesses', '--dry-run']);
+  assert.equal(allTargetsParsed.allTargets, true);
+  assert.equal(allTargetsParsed.dryRun, true);
+
+  const targetAllParsed = parseArgs(['node', 'ecc-install', '--guided', '--targets', 'all', '--yes']);
+  assert.equal(targetAllParsed.allTargets, true);
+  assert.deepEqual(targetAllParsed.targets, []);
+
+  assert.throws(() => parseArgs(['node', 'ecc-install', '--targets', '']), /Missing target name/);
+  assert.throws(() => parseArgs(['node', 'ecc-install', '--profile', '']), /Missing value/);
+});
+
+test('guided profiles match real repository components cleanly', () => {
+  const catalog = discoverCatalog(DEFAULT_REPO_ROOT);
+  const profiles = listGuidedProfiles(catalog);
+  assert.deepEqual(profiles.map(p => p.id), ['full', 'core', 'agentic', 'frontend', 'devops', 'custom']);
+
+  for (const id of ['core', 'agentic', 'frontend', 'devops']) {
+    const def = GUIDED_PROFILES[id];
+    const resolved = getGuidedProfile(id, catalog);
+    assert.deepEqual(resolved.skills, def.skills);
+    assert.deepEqual(resolved.agents, def.agents);
+    assert.deepEqual(resolved.commands, def.commands);
+    assert.deepEqual(resolved.shims, def.shims);
+  }
+
+  assert.throws(() => getGuidedProfile('nonexistent', catalog), /Unknown profile/);
+});
+
+test('createGuidedPlan deduplicates shared roots and applyGuidedPlan installs across all targets', () => {
+  const tmpDir = makeTempDir();
+  const fakeHome = path.join(tmpDir, 'home');
+  const fakeProject = path.join(tmpDir, 'project');
+  fs.mkdirSync(fakeHome, { recursive: true });
+  fs.mkdirSync(fakeProject, { recursive: true });
+
+  try {
+    const sharedPlan = createGuidedPlan({
+      homeDir: fakeHome,
+      projectRoot: fakeProject,
+      targets: ['arena', 'antigravity', 'cursor'],
+      profile: 'frontend',
+    });
+    assert.equal(sharedPlan.targetPlans.length, 2);
+    assert.deepEqual(sharedPlan.targetPlans[0].aliases, ['antigravity']);
+    assert.equal(sharedPlan.targetPlans[1].target, 'cursor');
+
+    const allPlan = createGuidedPlan({
+      homeDir: fakeHome,
+      projectRoot: fakeProject,
+      env: {},
+      allTargets: true,
+      profile: 'core',
+    });
+    assert.equal(allPlan.targetPlans.length, CANONICAL_ALL_TARGETS.length);
+
+    const applied = applyGuidedPlan(allPlan);
+    assert.equal(applied.summary.targets, CANONICAL_ALL_TARGETS.length);
+    assert.ok(fs.existsSync(path.join(fakeProject, '.agents', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeProject, '.claude', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeHome, '.claude', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeProject, '.cursor', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeHome, '.codex', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeHome, '.config', 'opencode', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeProject, '.gemini', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeProject, '.kimi-code', 'skills', 'blueprint', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(fakeProject, '.github', 'skills', 'blueprint', 'SKILL.md')));
+
+    // When homeDir === projectRoot, claude and claude-project share .claude and deduplicate safely
+    const sameRootPlan = createGuidedPlan({
+      homeDir: tmpDir,
+      projectRoot: tmpDir,
+      env: {},
+      allTargets: true,
+      profile: 'core',
+    });
+    assert.equal(sameRootPlan.targetPlans.length, CANONICAL_ALL_TARGETS.length - 1);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('CLI --guided enforces non-interactive safety flags and supports multi-target dry-run & apply', () => {
+  const binPath = path.join(DEFAULT_REPO_ROOT, 'bin', 'ecc-install.js');
+  const tmpDir = makeTempDir();
+  try {
+    assert.throws(
+      () => execFileSync(process.execPath, [binPath, '--guided'], { stdio: 'pipe' }),
+      (err) => err.status === 1 && /requires at least one target/.test(err.stderr.toString())
+    );
+
+    assert.throws(
+      () => execFileSync(process.execPath, [binPath, '--guided', '--target', 'arena'], { stdio: 'pipe' }),
+      (err) => err.status === 1 && /requires --yes \(-y\)/.test(err.stderr.toString())
+    );
+
+    const previewOut = execFileSync(
+      process.execPath,
+      [binPath, '--guided', '--targets', 'arena,cursor', '--profile', 'core', '--dry-run', '--json'],
+      { cwd: tmpDir, encoding: 'utf8', env: { ...process.env, HOME: tmpDir } }
+    );
+    const previewJson = JSON.parse(previewOut);
+    assert.equal(previewJson.dryRun, true);
+    assert.equal(previewJson.guidedPlan.profile, 'core');
+    assert.deepEqual(previewJson.guidedPlan.targets, ['arena', 'cursor']);
+    assert.equal(fs.existsSync(path.join(tmpDir, '.agents')), false);
+    assert.equal(fs.existsSync(path.join(tmpDir, '.cursor')), false);
+
+    const applyOut = execFileSync(
+      process.execPath,
+      [binPath, '--guided', '--targets', 'arena,claude-project,gemini', '--profile', 'frontend', '--yes', '--json'],
+      { cwd: tmpDir, encoding: 'utf8', env: { ...process.env, HOME: tmpDir } }
+    );
+    const applyJson = JSON.parse(applyOut);
+    assert.equal(applyJson.dryRun, false);
+    assert.equal(applyJson.result.summary.targets, 3);
+    assert.ok(fs.existsSync(path.join(tmpDir, '.agents', 'skills', 'liquid-glass-design', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(tmpDir, '.agents', 'ecc-curated-state.json')));
+    assert.ok(fs.existsSync(path.join(tmpDir, '.claude', 'ecc', 'curated-state.json')));
+    assert.ok(fs.existsSync(path.join(tmpDir, '.gemini', 'ecc-curated-state.json')));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('interactive guided wizard prompts, validates retries, handles cancel, and installs multi-target', async () => {
+  const tmpDir = makeTempDir();
+  try {
+    function makePromptRunner(answers) {
+      let idx = 0;
+      return async () => {
+        if (idx >= answers.length) {
+          throw new Error('Unexpected extra wizard prompt');
+        }
+        const next = answers[idx];
+        idx += 1;
+        return next;
+      };
+    }
+
+    function captureStream() {
+      const chunks = [];
+      const stream = new PassThrough();
+      stream.on('data', c => chunks.push(c.toString('utf8')));
+      return { stream, text: () => chunks.join('') };
+    }
+
+    // Cancel path: custom profile with invalid input retry, '?' help, valid selection, then cancel at confirmation
+    const outCancel = captureStream();
+    const errCancel = captureStream();
+    const cancelRes = await runGuidedInstall(
+      parseArgs(['node', 'ecc-install', '--guided']),
+      {
+        repoRoot: DEFAULT_REPO_ROOT,
+        projectRoot: tmpDir,
+        homeDir: tmpDir,
+        env: {},
+        isTTY: true,
+        useColor: false,
+        stdin: new PassThrough(),
+        stdout: outCancel.stream,
+        stderr: errCancel.stream,
+        ask: makePromptRunner([
+          'bogus',       // invalid target -> retry
+          '3,5',         // arena + cursor
+          'custom',      // step 2: custom profile
+          '?',           // print catalog help
+          'no-such-id',  // invalid component -> retry
+          'api-design,plan,tdd',
+          'n',           // exclude shims
+          'n',           // do not force overwrite
+          'n',           // cancel install
+        ]),
+      }
+    );
+    assert.equal(cancelRes.status, 'cancelled');
+    assert.ok(outCancel.text().includes('Unknown target "bogus"'));
+    assert.ok(outCancel.text().includes('Installation cancelled'));
+    assert.equal(fs.existsSync(path.join(tmpDir, '.agents')), false);
+    assert.equal(fs.existsSync(path.join(tmpDir, '.cursor')), false);
+
+    // Confirm path: install frontend profile into arena & kimi
+    const outApply = captureStream();
+    const errApply = captureStream();
+    const applyRes = await runGuidedInstall(
+      parseArgs(['node', 'ecc-install', '--guided']),
+      {
+        repoRoot: DEFAULT_REPO_ROOT,
+        projectRoot: tmpDir,
+        homeDir: tmpDir,
+        env: {},
+        isTTY: true,
+        useColor: false,
+        stdin: new PassThrough(),
+        stdout: outApply.stream,
+        stderr: errApply.stream,
+        ask: makePromptRunner([
+          'arena,kimi',
+          '4',   // frontend
+          'y',   // include shims
+          'n',   // no force
+          'y',   // confirm!
+        ]),
+      }
+    );
+    assert.equal(applyRes.status, 'applied');
+    assert.equal(applyRes.result.summary.targets, 2);
+    assert.ok(outApply.text().includes('ECC Guided Install Complete'));
+    assert.ok(fs.existsSync(path.join(tmpDir, '.agents', 'skills', 'liquid-glass-design', 'SKILL.md')));
+    assert.ok(fs.existsSync(path.join(tmpDir, '.kimi-code', 'skills', 'liquid-glass-design', 'SKILL.md')));
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

@@ -12,7 +12,8 @@ This repository packages a curated subset of **Everything Claude Code (ECC)** al
 
 - Run installer tests: `npm test`
 - Start dashboard PWA server: `npm run dashboard` (or `node dashboard/server.js`, binds `0.0.0.0:${PORT:-3000}`)
-- List curated ECC components: `ecc-install --list`
+- List curated ECC components & profiles: `ecc-install --list`
+- Interactive / multi-target guided setup: `ecc-install --guided` (or `--guided --targets arena,claude-project --profile full --yes` in non-TTY)
 - Install for Arena project agents: `ecc-install --target arena`
 - Install for Claude project-local: `ecc-install --target claude-project`
 

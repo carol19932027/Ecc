@@ -38,9 +38,37 @@ Or install everything defined in `ecc-install.json` with no arguments:
 ecc-install
 ```
 
+### Guided Installer (`--guided`)
+
+Run the interactive multi-target setup wizard in a terminal:
+
+```bash
+ecc-install --guided
+```
+
+Or run `--guided` non-interactively in CI / scripts across one or more targets:
+
+```bash
+# Preview multi-target guided install without writing files
+ecc-install --guided --targets arena,claude-project,cursor --profile core --dry-run
+
+# Apply non-interactively with explicit confirmation
+ecc-install --guided --targets arena,claude-project --profile full --yes
+
+# Install to all 9 unique target roots
+ecc-install --guided --all-targets --profile frontend --yes
+```
+
+Available profiles: `full`, `core`, `agentic`, `frontend`, `devops`, `custom`.
+
 ### Common Options
 
+- `-g, --guided`: run guided setup wizard (interactive in TTY; requires `--target`/`--targets`/`--all-targets`/`--dest` plus `--yes` or `--dry-run` in non-TTY)
 - `--target <name>`: `claude` (default, `~/.claude/`), `claude-project` (`./.claude/`), `arena` (`./.agents/`), `antigravity` (`./.agents/`), `cursor` (`./.cursor/`), `codex` (`~/.codex/`), `opencode` (`~/.config/opencode/`), `gemini` (`./.gemini/`), `kimi` (`./.kimi-code/`), `copilot` (`./.github/`)
+- `--targets <names>`: comma-separated list of targets (aliases `--harness` / `--harnesses` accepted)
+- `--all-targets`: install into all 9 unique target directories (`--all-harnesses` alias accepted)
+- `--profile <name>`: select curated preset (`full`, `core`, `agentic`, `frontend`, `devops`, `custom`)
+- `-y, --yes`: confirm guided installation without prompt
 - `--dest <dir>`: install into a custom directory
 - `--no-shims`: omit legacy command shim Markdown files
 - `--no-canonical`: do not automatically include canonical replacement skills referenced by legacy shims
@@ -48,7 +76,7 @@ ecc-install
 - `--dry-run`: preview operations without writing files
 - `--json`: emit machine-readable JSON output
 - `--force`: overwrite pre-existing unmanaged files with differing contents
-- `--list`: list all curated components in the repository
+- `--list`: list all curated components, targets, and guided profiles
 - `--uninstall`: remove unchanged files tracked in `curated-state.json`
 
 ## Aether ECC — Liquid Glass Mobile-First PWA Dashboard
