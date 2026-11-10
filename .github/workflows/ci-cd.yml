@@ -112,20 +112,53 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Check GitHub Pages enablement
+        id: pages_status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/pages")
+          echo "http_code=$code"
+          if [ "$code" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Configure GitHub Pages
+        id: configure_pages
+        continue-on-error: true
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Deploy to GitHub Pages
         id: deployment
+        if: steps.pages_status.outputs.enabled == 'true' || steps.configure_pages.outcome == 'success'
         uses: actions/deploy-pages@v4
 
       - name: Summarize Pages deployment
+        if: steps.deployment.outcome == 'success'
         run: |
           {
             echo "## Static Live Preview Deployed"
             echo ""
             echo "- **URL**: ${{ steps.deployment.outputs.page_url }}"
             echo "- **Source Ref**: \`${{ github.ref_name }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Notice when GitHub Pages needs one-time activation
+        if: steps.pages_status.outputs.enabled != 'true' && steps.configure_pages.outcome != 'success'
+        run: |
+          echo "::notice title=GitHub Pages Activation Needed::Enable GitHub Pages once in Repository Settings -> Pages -> Source: GitHub Actions, then re-run this workflow to publish https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/. The downloadable static preview artifact (aether-ecc-static-preview) is ready."
+          {
+            echo "## GitHub Pages Not Enabled Yet"
+            echo ""
+            echo "GitHub does not allow \`GITHUB_TOKEN\` to create a repository's Pages site for the first time via API."
+            echo "Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** once, then re-run this workflow."
+            echo ""
+            echo "In the meantime, the \`aether-ecc-static-preview\` build artifact is uploaded above and the **Ephemeral Live Preview Tunnel** workflow is active."
           } >> "$GITHUB_STEP_SUMMARY"
