@@ -91,6 +91,24 @@ npm run dashboard
 - **Installable PWA**: `manifest.webmanifest`, offline Service Worker (`sw.js`), offline fallback, and custom raster PNG + SVG icons.
 - **Live ECC Integration**: inspects `.agents/` (`arena`), `.claude/` (`claude-project`), and `~/.claude/`, searches all 66 components, runs integrity audits, and recommends `ecc-install` commands via `POST /api/recommend`.
 
+## CI/CD & Live Preview
+
+This repository includes a complete zero-secret GitHub Actions CI/CD pipeline and an ephemeral Live Preview composite action modeled after `sharadcodes/live-preview-action`:
+
+1. **CI/CD & Static Live Preview (`.github/workflows/ci-cd.yml`)**
+   - Runs syntax checks, `npm test` (22 tests), CLI dry-run & integrity audits (`bin/ecc-install.js`), and an automated HTTP `/api/health` smoke check on every push and PR.
+   - Builds a standalone subpath-compatible static bundle (`npm run build:preview` -> `dist-preview/`) with pre-generated `preview-data/bundle.json` so every dashboard view, EN/FA AI router query, component inspector sheet, and iOS 27.1.3 token swatch works seamlessly even without a Node backend.
+   - Uploads `aether-ecc-static-preview` artifacts on all runs and deploys `dist-preview/` to GitHub Pages on `main` pushes or manual dispatch.
+
+2. **On-Demand Ephemeral Live Preview Tunnel (`.github/workflows/live-preview.yml` + `.github/actions/live-preview/`)**
+   - Trigger via **Actions -> Ephemeral Live Preview Tunnel -> Run workflow** (choose duration `5–60` minutes, provider `auto` / `cloudflared` / `localhost.run` / `localtunnel`, and port) or by adding the `live-preview` label to a Pull Request.
+   - Starts `npm run dashboard`, verifies `/api/health`, opens an ephemeral HTTPS tunnel with automatic fallback across zero-secret providers, writes `url` / `provider` / `expires_at` outputs + `$GITHUB_STEP_SUMMARY`, posts/updates a sticky PR comment, and optionally notifies a `DISCORD_WEBHOOK_URL` secret if configured.
+
+```bash
+# Build static GitHub Pages / offline preview bundle locally
+npm run build:preview
+```
+
 ## Tests
 
 ```bash

@@ -144,7 +144,12 @@ function buildCatalogItems(repoRoot = DEFAULT_REPO_ROOT) {
   return { catalog, items };
 }
 
-function inspectTargetStates(repoRoot, projectRoot, homeDir, env) {
+function inspectTargetStates(
+  repoRoot = DEFAULT_REPO_ROOT,
+  projectRoot = process.cwd(),
+  homeDir = process.env.HOME || os.homedir(),
+  env = process.env
+) {
   const inspectList = ['arena', 'claude-project', 'claude', 'cursor'];
   return inspectList.map(targetName => {
     const spec = resolveTargetSpec(targetName, { homeDir, projectRoot, env });
@@ -284,7 +289,12 @@ function recommendComponents(query, items) {
   };
 }
 
-function runAuditAction(repoRoot, projectRoot, homeDir, env) {
+function runAuditAction(
+  repoRoot = DEFAULT_REPO_ROOT,
+  projectRoot = process.cwd(),
+  homeDir = process.env.HOME || os.homedir(),
+  env = process.env
+) {
   const { catalog } = buildCatalogItems(repoRoot);
   const targets = inspectTargetStates(repoRoot, projectRoot, homeDir, env);
   const issues = [];
@@ -391,18 +401,26 @@ function serveStatic(req, res, pathname) {
 
   const ext = path.extname(fileToServe).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-  const headers = { 'Content-Type': contentType };
+  const stat = fs.statSync(fileToServe);
+  const headers = {
+    'Content-Type': contentType,
+    'Content-Length': String(stat.size),
+  };
 
   if (path.basename(fileToServe) === 'sw.js') {
     headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
     headers['Service-Worker-Allowed'] = '/';
-  } else if (ext === '.html' || ext === '.webmanifest') {
-    headers['Cache-Control'] = 'no-cache';
+  } else if (ext === '.html' || ext === '.css' || ext === '.js' || ext === '.json' || ext === '.webmanifest') {
+    headers['Cache-Control'] = 'no-cache, must-revalidate';
   } else {
     headers['Cache-Control'] = 'public, max-age=3600';
   }
 
   res.writeHead(200, headers);
+  if (req.method === 'HEAD') {
+    res.end();
+    return;
+  }
   fs.createReadStream(fileToServe).pipe(res);
 }
 
@@ -413,17 +431,24 @@ function createDashboardServer(options = {}) {
   const env = options.env || process.env;
 
   return http.createServer(async (req, res) => {
-    const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+    const url = new URL(req.url || '/', 'http://localhost');
     const pathname = url.pathname;
 
     try {
-      if (req.method === 'GET' && pathname === '/api/health') {
-        return sendJson(res, 200, {
+      if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/api/health') {
+        const body = JSON.stringify({
           ok: true,
           service: 'aether-ecc-dashboard',
           uptimeSec: Math.floor(process.uptime()),
           timestamp: new Date().toISOString(),
         });
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Content-Length': String(Buffer.byteLength(body)),
+          'Cache-Control': 'no-store',
+        });
+        res.end(req.method === 'HEAD' ? undefined : body);
+        return;
       }
 
       if (req.method === 'GET' && pathname === '/api/status') {
@@ -458,6 +483,17 @@ function createDashboardServer(options = {}) {
             shims: catalog.shims.length,
           },
           items,
+        });
+      }
+
+      if (req.method === 'GET' && pathname === '/api/tokens') {
+        const tokensPath = path.join(PUBLIC_DIR, 'ios27-tokens.json');
+        if (!fs.existsSync(tokensPath)) {
+          return sendJson(res, 404, { ok: false, error: 'iOS 27 tokens manifest missing' });
+        }
+        return sendJson(res, 200, {
+          ok: true,
+          ...JSON.parse(fs.readFileSync(tokensPath, 'utf8')),
         });
       }
 
@@ -584,7 +620,11 @@ if (require.main === module) {
 
 module.exports = {
   buildCatalogItems,
+  buildTelemetrySnapshot,
   createDashboardServer,
+  getComponentFilePath,
+  inspectTargetStates,
   parseFrontmatter,
   recommendComponents,
+  runAuditAction,
 };

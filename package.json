@@ -7,9 +7,10 @@
     "ecc-install": "bin/ecc-install.js"
   },
   "scripts": {
+    "build:preview": "node dashboard/scripts/build-preview.js",
     "dashboard": "node dashboard/server.js",
     "ecc-install": "node bin/ecc-install.js",
-    "test": "node --test tests/ecc-install.test.js tests/dashboard.test.js"
+    "test": "node --test tests/ecc-install.test.js tests/dashboard.test.js tests/live-preview.test.js"
   },
   "engines": {
     "node": ">=18"

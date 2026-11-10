@@ -1,15 +1,18 @@
-const CACHE_VERSION = 'aether-ecc-v1';
+const CACHE_VERSION = 'aether-ecc-ios27-v7';
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.webmanifest',
-  '/offline.html',
-  '/icons/icon.svg',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-maskable.png',
+  './',
+  './index.html',
+  './styles.css',
+  './styles.css?v=27.1.5',
+  './app.js',
+  './app.js?v=27.1.5',
+  './ios27-tokens.json',
+  './manifest.webmanifest',
+  './offline.html',
+  './icons/icon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable.png',
 ];
 
 self.addEventListener('install', event => {
@@ -45,7 +48,6 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Network-first with cache fallback for API endpoints
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)
@@ -64,23 +66,38 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Navigation requests: network-first, fallback to cached shell or offline.html
   if (request.mode === 'navigate') {
+    const scopeRoot = new URL('./index.html', self.registration.scope).href;
+    const offlineUrl = new URL('./offline.html', self.registration.scope).href;
     event.respondWith(
       fetch(request)
         .then(response => {
           if (response.ok) {
             const copy = response.clone();
-            caches.open(CACHE_VERSION).then(cache => cache.put('/index.html', copy));
+            caches.open(CACHE_VERSION).then(cache => cache.put(scopeRoot, copy));
           }
           return response;
         })
-        .catch(() => caches.match('/index.html').then(cached => cached || caches.match('/offline.html')))
+        .catch(() => caches.match(scopeRoot).then(cached => cached || caches.match(offlineUrl)))
     );
     return;
   }
 
-  // Static assets: stale-while-revalidate
+  if (/\.(css|js|json|html|webmanifest)$/i.test(url.pathname)) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_VERSION).then(cache => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then(cached => {
       const networkPromise = fetch(request)

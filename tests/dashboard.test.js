@@ -38,9 +38,31 @@ test('dashboard HTTP server serves PWA shell, manifest, service worker, and API 
     const htmlRes = await fetch(`${baseUrl}/`);
     assert.equal(htmlRes.status, 200);
     assert.match(htmlRes.headers.get('content-type'), /text\/html/);
+    assert.ok(Number(htmlRes.headers.get('content-length')) > 0);
     const html = await htmlRes.text();
     assert.match(html, /manifest\.webmanifest/);
     assert.match(html, /Aether/);
+    assert.match(html, /styles\.css\?v=27\.1\.5/);
+    assert.match(html, /app\.js\?v=27\.1\.5/);
+    assert.match(html, /ios-progress-track/);
+    assert.match(html, /ios-page-control/);
+    assert.match(html, /ios-alert-dialog/);
+    assert.match(html, /id="dock-track" role="tablist"/);
+
+    const headRes = await fetch(`${baseUrl}/`, { method: 'HEAD' });
+    assert.equal(headRes.status, 200);
+    assert.ok(Number(headRes.headers.get('content-length')) > 0);
+    const healthHead = await fetch(`${baseUrl}/api/health`, { method: 'HEAD' });
+    assert.equal(healthHead.status, 200);
+
+    const proxyHostStatus = await new Promise((resolve, reject) => {
+      const req = http.get(`${baseUrl}/`, { headers: { Host: '3000-preview.e2b.app' } }, res => {
+        res.resume();
+        resolve(res.statusCode);
+      });
+      req.on('error', reject);
+    });
+    assert.equal(proxyHostStatus, 200);
 
     const swRes = await fetch(`${baseUrl}/sw.js`);
     assert.equal(swRes.status, 200);
@@ -56,6 +78,46 @@ test('dashboard HTTP server serves PWA shell, manifest, service worker, and API 
     const iconRes = await fetch(`${baseUrl}/icons/icon-192.png`);
     assert.equal(iconRes.status, 200);
     assert.equal(iconRes.headers.get('content-type'), 'image/png');
+
+    const tokensRes = await fetch(`${baseUrl}/api/tokens`);
+    assert.equal(tokensRes.status, 200);
+    const tokensData = await tokensRes.json();
+    assert.equal(tokensData.ok, true);
+    assert.equal(tokensData.meta.version, '27.1.3');
+    assert.equal(tokensData.meta.counts.pages, 36);
+    assert.equal(tokensData.meta.counts.swatches, 107);
+    assert.equal(tokensData.meta.counts.layerStyles, 42);
+    assert.equal(tokensData.meta.counts.textStyles, 105);
+    assert.equal(tokensData.sketchLayerStyles.length, 42);
+    assert.equal(tokensData.sketchSwatches.length, 107);
+    assert.equal(tokensData.sketchTextStyles.length, 105);
+    assert.equal(tokensData.sketchPagesCatalog.length, 36);
+    assert.equal(tokensData.opticalPhysics.interactiveLensKnob.Dark.radius, 0);
+    assert.equal(tokensData.opticalPhysics.interactiveLensKnob.Dark.chromaticAberrationMultiplier, 0.4);
+    assert.equal(tokensData.siriSphere.geometry.petalCount, 11);
+    assert.equal(tokensData.systemColors.Dark['8 Blue'].hex, '#0091FF');
+    assert.equal(tokensData.systemColors.Light['8 Blue'].hex, '#0088FF');
+    assert.equal(tokensData.components.toggle.trackWidth, 64);
+    assert.equal(tokensData.components.groupedList.cornerRadius, 26);
+
+    const staticTokensRes = await fetch(`${baseUrl}/ios27-tokens.json`);
+    assert.equal(staticTokensRes.status, 200);
+    assert.match(staticTokensRes.headers.get('content-type'), /application\/json/);
+    assert.match(staticTokensRes.headers.get('cache-control') || '', /no-cache/);
+
+    const cssRes = await fetch(`${baseUrl}/styles.css?v=27.1.5`);
+    assert.equal(cssRes.status, 200);
+    assert.match(cssRes.headers.get('cache-control') || '', /no-cache/);
+    const cssText = await cssRes.text();
+    assert.match(cssText, /\.dock-indicator\.is-lens/);
+    assert.match(cssText, /backdrop-filter:\s*blur\(0\.6px\)/);
+
+    const jsRes = await fetch(`${baseUrl}/app.js?v=27.1.5`);
+    assert.equal(jsRes.status, 200);
+    assert.match(jsRes.headers.get('cache-control') || '', /no-cache/);
+    const jsText = await jsRes.text();
+    assert.match(jsText, /function createGlassPillLens/);
+    assert.match(jsText, /function rubberBandX/);
 
     const statusRes = await fetch(`${baseUrl}/api/status`);
     assert.equal(statusRes.status, 200);

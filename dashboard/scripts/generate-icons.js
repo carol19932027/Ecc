@@ -93,32 +93,32 @@ function renderIcon(size, maskable = false) {
         continue;
       }
 
-      // Deep cosmic gradient base
-      let r = lerp(7, 14, ny);
-      let g = lerp(11, 20, ny);
-      let b = lerp(24, 46, nx * 0.6 + ny * 0.4);
+      // iOS 27 Dark Base (#000000 -> #1C1C1E)
+      let r = lerp(0, 28, ny);
+      let g = lerp(0, 28, ny);
+      let b = lerp(0, 30, ny);
 
-      // Aurora glow 1 (cyan top-left)
+      // iOS 27 System Blue (#0091FF = 0,145,255) & Cyan (#3CD3FE = 60,211,254)
       const d1 = Math.hypot(nx - 0.28, ny - 0.28);
       const glow1 = Math.exp(-d1 * d1 * 9.5);
-      r += glow1 * 48;
-      g += glow1 * 178;
-      b += glow1 * 238;
+      r += glow1 * 0;
+      g += glow1 * 145;
+      b += glow1 * 255;
 
-      // Aurora glow 2 (indigo-violet bottom-right)
+      // iOS 27 System Indigo (#6D7CFF = 109,124,255) bottom-right glow
       const d2 = Math.hypot(nx - 0.75, ny - 0.74);
       const glow2 = Math.exp(-d2 * d2 * 8.0);
-      r += glow2 * 124;
-      g += glow2 * 96;
-      b += glow2 * 240;
+      r += glow2 * 109;
+      g += glow2 * 124;
+      b += glow2 * 255;
 
-      // Outer liquid glass lens circle
+      // Outer iOS 27 Liquid Glass lens ring (#3CD3FE / #0091FF)
       const dCenter = Math.hypot(x - cx, y - cy) / size;
       const ringDist = Math.abs(dCenter - 0.295);
       const ringGlow = Math.exp(-(ringDist * ringDist) / 0.00028);
-      r = lerp(r, 140, ringGlow * 0.65);
-      g = lerp(g, 232, ringGlow * 0.78);
-      b = lerp(b, 255, ringGlow * 0.9);
+      r = lerp(r, 60, ringGlow * 0.7);
+      g = lerp(g, 211, ringGlow * 0.85);
+      b = lerp(b, 255, ringGlow * 0.95);
 
       // Inner translucent glass core
       if (dCenter < 0.28) {
