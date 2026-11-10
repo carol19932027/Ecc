@@ -416,6 +416,10 @@ async function runLivePreview(env = process.env) {
     });
     appendStepSummary(summaryMd, env.GITHUB_STEP_SUMMARY);
 
+    if (tunnel.url && env.GITHUB_ACTIONS === 'true') {
+      console.log(`::notice title=Aether Live Preview Ready::${tunnel.url} (provider: ${tunnel.provider}, expires: ${expiresAt})`);
+    }
+
     if (discordUrl) {
       await notifyDiscord(discordUrl, {
         url: tunnel.url,
