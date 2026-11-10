@@ -1,0 +1,364 @@
+#!/usr/bin/env node
+'use strict';
+
+const os = require('os');
+const {
+  DEFAULT_REPO_ROOT,
+  SUPPORTED_TARGETS,
+  VALID_GUIDED_PROFILE_IDS,
+  applyGuidedPlan,
+  applyInstallPlan,
+  createGuidedPlan,
+  createInstallPlan,
+  discoverCatalog,
+  listGuidedProfiles,
+  parseArgs,
+  uninstallFromTarget,
+} = require('../lib/ecc-installer');
+const {
+  formatGuidedApplied,
+  formatGuidedPreview,
+  runGuidedInstall,
+} = require('../lib/guided-wizard');
+
+function getHelpText() {
+  return `
+Usage:
+  ecc-install [--target <target>] [--dest <dir>] [--dry-run] [--json] [--force]
+              [--profile <name>] [--skills <id[,id...]>] [--agents <id[,id...]>]
+              [--commands <id[,id...]>] [--with <component[,...]>] [--without <component[,...]>]
+              [--no-shims] [--no-canonical] [--config <path>]
+  ecc-install --guided [--targets <t1,t2> | --all-targets] [--profile <name>]
+              [--yes] [--dry-run] [--json] [--force]
+  ecc-install --list [--json]
+  ecc-install --uninstall [--target <target>] [--dest <dir>] [--dry-run] [--json] [--force]
+
+Note:
+  --skills accepts skills, agents, commands, and legacy command shims from this repository
+  and resolves each entry to its proper destination directory. Legacy shims also include
+  their canonical replacement skills unless --no-canonical is passed.
+
+Guided Mode:
+  In an interactive terminal (TTY), --guided launches a step-by-step wizard across all targets
+  and curated profiles. In non-interactive environments (CI / scripts), pass explicit targets
+  (--target, --targets, --all-targets, or --dest) along with --yes (-y) or --dry-run.
+
+Profiles:
+  full            All curated skills (21), agents (9), commands (30), and legacy shims (6)
+  core            Essential everyday planning, TDD, review, compacting, and verification
+  agentic         Autonomous loops, harness engineering, continuous learning, and multi-agent
+  frontend        Liquid Glass design, UI patterns, API design, and E2E testing
+  devops          Deployment patterns, database migrations, codemaps, docs, and refactoring
+  custom          Custom component selection via wizard prompt or --skills/--with
+
+Targets:
+  claude          (default) ~/.claude/
+  claude-project  ./.claude/
+  arena           ./.agents/ (Arena & cross-agent skills/agents/workflows)
+  antigravity     ./.agents/ (commands installed into workflows/)
+  cursor          ./.cursor/
+  codex           ~/.codex/
+  opencode        $OPENCODE_CONFIG_DIR or ~/.config/opencode/
+  gemini          ./.gemini/
+  kimi            ./.kimi-code/
+  copilot         ./.github/
+
+Options:
+  -g, --guided           Run guided setup wizard (or non-interactive guided install with flags)
+  --targets <names>      Comma-separated target list (--harness / --harnesses alias supported)
+  --all-targets          Install to all 9 unique target directories (--all-harnesses alias)
+  --profile <name>       Curated profile (${VALID_GUIDED_PROFILE_IDS.join(', ')})
+  -y, --yes              Confirm guided installation without interactive prompt
+  --skills <ids>         Comma-separated skill/agent/command/shim IDs to install
+  --agents <ids>         Comma-separated agent IDs to install
+  --commands <ids>       Comma-separated command or shim IDs to install
+  --with <ids>           Include components (supports skill:<id>, agent:<id>, command:<id>, shim:<id>)
+  --without <ids>        Exclude components
+  --target <name>        Target harness (${SUPPORTED_TARGETS.join(', ')})
+  --dest <path>          Custom destination root directory (overrides --target)
+  --config <path>        Load defaults/selection from ecc-install.json
+  --shims                Install legacy command shim .md files (default: true)
+  --no-shims             Skip installing legacy command shim .md files
+  --canonical            Install canonical skills referenced by legacy shims (default: true)
+  --no-canonical         Do not auto-add canonical skills referenced by legacy shims
+  --force                Overwrite pre-existing unmanaged files with different contents
+  --dry-run              Preview planned operations without writing files
+  --json                 Print machine-readable JSON output
+  --list                 List all available skills, agents, commands, legacy shims, and profiles
+  --uninstall            Remove unchanged ECC-managed files tracked in curated-state.json
+  -h, --help             Show this help text
+`;
+}
+
+function printCatalog(catalog, asJson) {
+  const profiles = listGuidedProfiles(catalog).map(p => ({
+    id: p.id,
+    label: p.label,
+    description: p.description,
+    counts: p.isCustom
+      ? null
+      : {
+        skills: p.skills.length,
+        agents: p.agents.length,
+        commands: p.commands.length,
+        shims: p.shims.length,
+      },
+  }));
+
+  if (asJson) {
+    console.log(JSON.stringify({
+      repoRoot: catalog.repoRoot,
+      skills: catalog.skills,
+      agents: catalog.agents,
+      commands: catalog.commands,
+      legacyShims: catalog.shimCanonicalMap,
+      targets: SUPPORTED_TARGETS,
+      profiles,
+    }, null, 2));
+    return;
+  }
+
+  console.log(`ECC curated catalog (${catalog.repoRoot}):\n`);
+  console.log(`Skills (${catalog.skills.length}):`);
+  console.log(`  ${catalog.skills.join(', ')}\n`);
+  console.log(`Agents (${catalog.agents.length}):`);
+  console.log(`  ${catalog.agents.join(', ')}\n`);
+  console.log(`Commands (${catalog.commands.length}):`);
+  console.log(`  ${catalog.commands.join(', ')}\n`);
+  console.log(`Legacy command shims (${catalog.shims.length}):`);
+  for (const shimId of catalog.shims) {
+    const canonical = catalog.shimCanonicalMap[shimId] || [];
+    console.log(`  ${shimId} -> ${canonical.join(', ') || '(none)'}`);
+  }
+  console.log(`\nGuided profiles (${profiles.length}):`);
+  for (const p of profiles) {
+    const summary = p.counts
+      ? `${p.counts.skills} skills, ${p.counts.agents} agents, ${p.counts.commands} commands, ${p.counts.shims} shims`
+      : 'manual component IDs';
+    console.log(`  ${p.id}: ${summary} — ${p.description}`);
+  }
+}
+
+function printHumanResult(result, dryRun) {
+  const counts = result.summary || {
+    total: result.operations.length,
+    created: result.operations.filter(op => op.action === 'create').length,
+    updated: result.operations.filter(op => op.action === 'update').length,
+    unchanged: result.operations.filter(op => op.action === 'unchanged').length,
+    skipped: result.operations.filter(op => op.action === 'skip-conflict').length,
+  };
+
+  console.log(`${dryRun ? 'Dry-run install plan' : 'ECC install complete'}:\n`);
+  console.log(`Mode: ${result.mode}`);
+  console.log(`Target: ${result.target}`);
+  console.log(`Install root: ${result.targetRoot}`);
+  console.log(`Install state: ${result.installStatePath}`);
+  if (result.configPath) {
+    console.log(`Config: ${result.configPath}`);
+  }
+  console.log(
+    `Selected: ${result.selection.skills.length} skills, `
+    + `${result.selection.agents.length} agents, `
+    + `${result.selection.commands.length} commands, `
+    + `${result.selection.shims.length} legacy shims`
+  );
+
+  const aliases = result.resolvedAliases || {};
+  if (aliases.agentsFromSkillsFlag?.length) {
+    console.log(`Resolved agents from --skills: ${aliases.agentsFromSkillsFlag.join(', ')}`);
+  }
+  if (aliases.commandsFromSkillsFlag?.length) {
+    console.log(`Resolved commands from --skills: ${aliases.commandsFromSkillsFlag.join(', ')}`);
+  }
+  if (aliases.shimsFromSkillsFlag?.length) {
+    console.log(`Resolved legacy shims from --skills: ${aliases.shimsFromSkillsFlag.join(', ')}`);
+  }
+  if (aliases.canonicalAddedFromShims?.length) {
+    const mapped = aliases.canonicalAddedFromShims.map(m => `${m.shim} -> ${m.skill}`).join(', ');
+    console.log(`Included canonical skills for shims: ${mapped}`);
+  }
+
+  console.log(
+    `Operations (${counts.total}): `
+    + `${counts.created} create, ${counts.updated} update, `
+    + `${counts.unchanged} unchanged, ${counts.skipped} skipped`
+  );
+
+  if (result.warnings.length > 0) {
+    console.log('\nWarnings:');
+    for (const warning of result.warnings) {
+      console.log(`- ${warning}`);
+    }
+  }
+
+  console.log(`\n${dryRun ? 'Planned' : 'Processed'} files:`);
+  for (const op of result.operations) {
+    console.log(`- [${op.action}] ${op.sourceRelativePath} -> ${op.destinationPath}`);
+  }
+
+  if (!dryRun) {
+    console.log(`\nDone. State written to ${result.installStatePath}`);
+  }
+}
+
+function printHumanUninstall(result, dryRun) {
+  console.log(`${dryRun ? 'Dry-run uninstall plan' : 'ECC uninstall complete'}:\n`);
+  console.log(`Target: ${result.target}`);
+  console.log(`Install root: ${result.targetRoot}`);
+  console.log(`Removed: ${result.removed.length}`);
+  console.log(`Preserved (modified/unmanaged): ${result.preserved.length}`);
+  for (const filePath of result.removed) {
+    console.log(`- [remove] ${filePath}`);
+  }
+  for (const filePath of result.preserved) {
+    console.log(`- [preserve] ${filePath}`);
+  }
+}
+
+async function main() {
+  try {
+    const parsed = parseArgs(process.argv);
+
+    if (parsed.help) {
+      console.log(getHelpText());
+      return;
+    }
+
+    if (parsed.guided && parsed.uninstall) {
+      throw new Error('Cannot combine --guided with --uninstall.');
+    }
+
+    if (parsed.guided && parsed.list) {
+      throw new Error('Cannot combine --guided with --list.');
+    }
+
+    const repoRoot = DEFAULT_REPO_ROOT;
+    const projectRoot = process.cwd();
+    const homeDir = process.env.HOME || os.homedir();
+
+    if (parsed.list) {
+      const catalog = discoverCatalog(repoRoot);
+      printCatalog(catalog, parsed.json);
+      return;
+    }
+
+    if (parsed.guided) {
+      await runGuidedInstall(parsed, {
+        repoRoot,
+        projectRoot,
+        homeDir,
+        env: process.env,
+      });
+      return;
+    }
+
+    if (parsed.uninstall) {
+      const uninstallResult = uninstallFromTarget({
+        repoRoot,
+        projectRoot,
+        homeDir,
+        env: process.env,
+        target: parsed.target,
+        dest: parsed.dest,
+        configPath: parsed.configPath,
+        dryRun: parsed.dryRun,
+        force: parsed.force,
+      });
+      if (parsed.json) {
+        console.log(JSON.stringify({ dryRun: parsed.dryRun, uninstall: uninstallResult }, null, 2));
+      } else {
+        printHumanUninstall(uninstallResult, parsed.dryRun);
+      }
+      return;
+    }
+
+    if (parsed.targets.length > 1 || parsed.allTargets) {
+      const guidedPlan = createGuidedPlan({
+        repoRoot,
+        projectRoot,
+        homeDir,
+        env: process.env,
+        targets: parsed.targets,
+        allTargets: parsed.allTargets,
+        dest: parsed.dest,
+        configPath: parsed.configPath,
+        profile: parsed.profile,
+        skills: parsed.skills,
+        agents: parsed.agents,
+        commands: parsed.commands,
+        withComponents: parsed.withComponents,
+        withoutComponents: parsed.withoutComponents,
+        includeCanonical: parsed.includeCanonical,
+        installShims: parsed.installShims,
+        force: parsed.force,
+      });
+
+      const identityColor = {
+        bold: s => s,
+        dim: s => s,
+        cyan: s => s,
+        green: s => s,
+        yellow: s => s,
+        red: s => s,
+      };
+
+      if (parsed.dryRun) {
+        if (parsed.json) {
+          console.log(JSON.stringify({ dryRun: true, guidedPlan }, null, 2));
+        } else {
+          process.stdout.write(formatGuidedPreview(guidedPlan, identityColor));
+          console.log('Dry run complete. No changes were made.');
+        }
+        return;
+      }
+
+      const result = applyGuidedPlan(guidedPlan);
+      if (parsed.json) {
+        console.log(JSON.stringify({ dryRun: false, result }, null, 2));
+      } else {
+        process.stdout.write(formatGuidedApplied(result, identityColor));
+      }
+      return;
+    }
+
+    const plan = createInstallPlan({
+      repoRoot,
+      projectRoot,
+      homeDir,
+      env: process.env,
+      target: parsed.target,
+      dest: parsed.dest,
+      configPath: parsed.configPath,
+      profile: parsed.profile,
+      skills: parsed.skills,
+      agents: parsed.agents,
+      commands: parsed.commands,
+      withComponents: parsed.withComponents,
+      withoutComponents: parsed.withoutComponents,
+      includeCanonical: parsed.includeCanonical,
+      installShims: parsed.installShims,
+      force: parsed.force,
+    });
+
+    if (parsed.dryRun) {
+      if (parsed.json) {
+        console.log(JSON.stringify({ dryRun: true, plan }, null, 2));
+      } else {
+        printHumanResult(plan, true);
+      }
+      return;
+    }
+
+    const result = applyInstallPlan(plan);
+    if (parsed.json) {
+      console.log(JSON.stringify({ dryRun: false, result }, null, 2));
+    } else {
+      printHumanResult(result, false);
+    }
+  } catch (error) {
+    process.stderr.write(`Error: ${error.message}\n`);
+    process.exit(1);
+  }
+}
+
+main();

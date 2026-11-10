@@ -1,0 +1,131 @@
+name: CI/CD & Static Preview
+
+on:
+  push:
+    branches:
+      - main
+      - 'arena/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Test, Audit & Smoke Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Syntax check Node and browser modules
+        run: |
+          node --check bin/ecc-install.js
+          node --check lib/ecc-installer.js
+          node --check dashboard/server.js
+          node --check dashboard/scripts/build-preview.js
+          node --check dashboard/public/app.js
+          node --check dashboard/public/sw.js
+          node --check .github/actions/live-preview/runner.js
+
+      - name: Run unit & integration tests
+        run: npm test
+
+      - name: Verify ECC installer dry-run and audit
+        run: |
+          node bin/ecc-install.js --list --json > /dev/null
+          node bin/ecc-install.js --target arena --dry-run
+          node bin/ecc-install.js --guided --targets arena,claude-project --profile core --dry-run
+          node -e "const { runAuditAction } = require('./dashboard/server'); const r = runAuditAction(); console.log(JSON.stringify(r)); if (!r.ok || r.issues.length > 0) process.exit(1);"
+
+      - name: Smoke test dashboard server via Live Preview Action
+        uses: ./.github/actions/live-preview
+        with:
+          port: '3000'
+          command: npm run dashboard
+          minutes: '0'
+          provider: 'none'
+          health_path: /api/health
+          comment_on_pr: 'false'
+
+  build-preview:
+    name: Build Static Preview Bundle
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build static preview into dist-preview
+        run: npm run build:preview
+
+      - name: Verify static preview artifacts
+        run: |
+          test -f dist-preview/index.html
+          test -f dist-preview/404.html
+          test -f dist-preview/.nojekyll
+          test -f dist-preview/sw.js
+          test -f dist-preview/manifest.webmanifest
+          test -f dist-preview/ios27-tokens.json
+          test -f dist-preview/preview-data/bundle.json
+
+      - name: Upload downloadable preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aether-ecc-static-preview
+          path: dist-preview/
+          retention-days: 14
+
+      - name: Upload GitHub Pages artifact
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-preview/
+
+  deploy-pages:
+    name: Deploy Static Live Preview (GitHub Pages)
+    needs: build-preview
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Summarize Pages deployment
+        run: |
+          {
+            echo "## Static Live Preview Deployed"
+            echo ""
+            echo "- **URL**: ${{ steps.deployment.outputs.page_url }}"
+            echo "- **Source Ref**: \`${{ github.ref_name }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

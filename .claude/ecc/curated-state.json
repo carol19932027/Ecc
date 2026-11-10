@@ -1,0 +1,480 @@
+{
+  "version": 1,
+  "target": "claude-project",
+  "targetRoot": "/home/user/Ecc/.claude",
+  "installedAt": "2026-11-09T23:41:31.874Z",
+  "selection": {
+    "skills": [
+      "agent-harness-construction",
+      "api-design",
+      "autonomous-agent-harness",
+      "autonomous-loops",
+      "blueprint",
+      "coding-standards",
+      "configure-ecc",
+      "continuous-agent-loop",
+      "continuous-learning",
+      "continuous-learning-v2",
+      "database-migrations",
+      "deployment-patterns",
+      "dmux-workflows",
+      "e2e-testing",
+      "eval-harness",
+      "frontend-patterns",
+      "liquid-glass-design",
+      "prompt-optimizer",
+      "strategic-compact",
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "agents": [
+      "architect",
+      "build-error-resolver",
+      "code-reviewer",
+      "doc-updater",
+      "e2e-runner",
+      "harness-optimizer",
+      "loop-operator",
+      "planner",
+      "refactor-cleaner"
+    ],
+    "commands": [
+      "build-fix",
+      "checkpoint",
+      "code-review",
+      "evolve",
+      "harness-audit",
+      "instinct-export",
+      "instinct-import",
+      "instinct-status",
+      "learn",
+      "learn-eval",
+      "loop-start",
+      "loop-status",
+      "model-route",
+      "multi-backend",
+      "multi-execute",
+      "multi-frontend",
+      "multi-plan",
+      "multi-workflow",
+      "plan",
+      "projects",
+      "promote",
+      "refactor-clean",
+      "resume-session",
+      "save-session",
+      "sessions",
+      "setup-pm",
+      "skill-create",
+      "test-coverage",
+      "update-codemaps",
+      "update-docs"
+    ],
+    "shims": [
+      "e2e",
+      "eval",
+      "orchestrate",
+      "prompt-optimize",
+      "tdd",
+      "verify"
+    ],
+    "skippedShims": []
+  },
+  "files": {
+    "skills/agent-harness-construction/SKILL.md": {
+      "sha256": "e7fb390a6663b46ea5d3c2876753a5ce32ba3bad1889686b21a42894caa1742d",
+      "kind": "skill",
+      "id": "agent-harness-construction"
+    },
+    "skills/api-design/SKILL.md": {
+      "sha256": "250e464413a13c0eb93cc73447b423df1f9aa8e4f80e5e68c41f895b2c33e352",
+      "kind": "skill",
+      "id": "api-design"
+    },
+    "skills/autonomous-agent-harness/SKILL.md": {
+      "sha256": "74afde3fa6e8423bdbf43f53b24c7b4a8b441648a1ad8f23953dc6eba3378409",
+      "kind": "skill",
+      "id": "autonomous-agent-harness"
+    },
+    "skills/autonomous-loops/SKILL.md": {
+      "sha256": "8ea5ee2cab40ca2c5c5ea606f5927b6139b04acddc4f00c5883c12e1f512cc40",
+      "kind": "skill",
+      "id": "autonomous-loops"
+    },
+    "skills/blueprint/SKILL.md": {
+      "sha256": "878eae8ed0ea4d46d21c8f88d471f6ffce7b0815202a43501060a163e7f446f3",
+      "kind": "skill",
+      "id": "blueprint"
+    },
+    "skills/coding-standards/SKILL.md": {
+      "sha256": "e80544c3d1eac5b14f22022146bd91a6b0ecc30e099cf5181894853aeb81dee1",
+      "kind": "skill",
+      "id": "coding-standards"
+    },
+    "skills/configure-ecc/SKILL.md": {
+      "sha256": "ad87612e3cd745332625cd707179f4e98dc78da99183640f985637022ec9d650",
+      "kind": "skill",
+      "id": "configure-ecc"
+    },
+    "skills/continuous-agent-loop/SKILL.md": {
+      "sha256": "f228cd383a9063b3a0116c5aea02565e859992f63fae5e799adf9c9e44e2454d",
+      "kind": "skill",
+      "id": "continuous-agent-loop"
+    },
+    "skills/continuous-learning/config.json": {
+      "sha256": "8af9150b6dca782cc3cb938e0c2267ad85ee4772eaf3ec30c0b91a848d108a44",
+      "kind": "skill",
+      "id": "continuous-learning"
+    },
+    "skills/continuous-learning/evaluate-session.sh": {
+      "sha256": "3e07e0b2916fbcdd7670648548d418ee87bdce0c6548c48e298965e5db387fcd",
+      "kind": "skill",
+      "id": "continuous-learning"
+    },
+    "skills/continuous-learning/SKILL.md": {
+      "sha256": "d494867b456999cad53c51c89fa2cf8da101f76ea875286987f52e5d45f72221",
+      "kind": "skill",
+      "id": "continuous-learning"
+    },
+    "skills/continuous-learning-v2/agents/observer-loop.sh": {
+      "sha256": "a6d119252c8ff2eda7aa7b345c2254fd6bdaf14056f6b5bf54835a2738ff310d",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/agents/observer.md": {
+      "sha256": "320d50ff2965efeabd6f07c2be134e11da160293e958c1bc27c309d613839ad2",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/agents/session-guardian.sh": {
+      "sha256": "ee6e4c0990f8d538cae1c85aa194e01e9ca2336e5d993ef68eb608b96cb0d82c",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/agents/start-observer.sh": {
+      "sha256": "6f5beed1e96f685c09ffa7f614f9673ba68f1466a60830252b8b9138efe05e84",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/config.json": {
+      "sha256": "6f17e7a99aafe252ecd0b9212fb5f606be50b8ce1685f5a6435e46e87ffeb970",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/hooks/observe.sh": {
+      "sha256": "e7881a6a00a8c5773feda0f9deb763256e2d12fc216b31405ccc84b987128d19",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/scripts/detect-project.sh": {
+      "sha256": "43215ad15ce0c6585c13b1c45cbba6bf8df0dc459b663ddca77c0b86c459c283",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/scripts/instinct-cli.py": {
+      "sha256": "34e6d8d800ae47d08c7ba286040499444f6a6da08c00cda190548c39b45dee93",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/scripts/lib/homunculus-dir.sh": {
+      "sha256": "99dfa99ae0f7c6e2e15ed5b5bf3c46e91a5f089f4060ba93d5da5e85e04fd308",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/scripts/migrate-homunculus.sh": {
+      "sha256": "34f121c143a676d330f06209618aae8cb08f8155298cb5fa70c893314bf9b303",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/scripts/test_parse_instinct.py": {
+      "sha256": "ef532da862e1482b62cabfafd9079036bd291a58327ac164d2cf67063711a51d",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/continuous-learning-v2/SKILL.md": {
+      "sha256": "ddad12451a0d582c6ef1b197b7be193bef613cbc74eba4117fcb74fc7a4ecd00",
+      "kind": "skill",
+      "id": "continuous-learning-v2"
+    },
+    "skills/database-migrations/SKILL.md": {
+      "sha256": "dad2f1964295eee14a96e06213ce3f60992bbcdc1f37a50c828bbc2e1abd79dd",
+      "kind": "skill",
+      "id": "database-migrations"
+    },
+    "skills/deployment-patterns/SKILL.md": {
+      "sha256": "b864abd1954570c4a469b7e1deb897e57858d25db2fd98d035ff7bca4a15b9b6",
+      "kind": "skill",
+      "id": "deployment-patterns"
+    },
+    "skills/dmux-workflows/SKILL.md": {
+      "sha256": "921836c6a10e65516654974815ec5acd358ce093e8043932781ba43bdd0a64a5",
+      "kind": "skill",
+      "id": "dmux-workflows"
+    },
+    "skills/e2e-testing/SKILL.md": {
+      "sha256": "b0e00e7e17cb259101139900816c5528aed18dd10bcf5f9cb42cfc35baf8a755",
+      "kind": "skill",
+      "id": "e2e-testing"
+    },
+    "skills/eval-harness/SKILL.md": {
+      "sha256": "3a5339a5a80099a5c9d55da9b6c8e05a690f5befc6f78d779c75dd79d818ca07",
+      "kind": "skill",
+      "id": "eval-harness"
+    },
+    "skills/frontend-patterns/SKILL.md": {
+      "sha256": "a5b971eb9e74cd763c7e3308bfd888e0d9cf69f8b88477659889d77182479740",
+      "kind": "skill",
+      "id": "frontend-patterns"
+    },
+    "skills/liquid-glass-design/SKILL.md": {
+      "sha256": "6e424b8daba26c92a8283cd3e5b35c7b2bc78a0a9fc07821a5939027090b8e43",
+      "kind": "skill",
+      "id": "liquid-glass-design"
+    },
+    "skills/prompt-optimizer/SKILL.md": {
+      "sha256": "e98058f34c3338014d0b9ef0c821d932d6820284d40d1eaf4f716bceb9147db0",
+      "kind": "skill",
+      "id": "prompt-optimizer"
+    },
+    "skills/strategic-compact/SKILL.md": {
+      "sha256": "1c3be090bffc100e31d185196cff0eb7075a877523cf41c19d781baca65b219f",
+      "kind": "skill",
+      "id": "strategic-compact"
+    },
+    "skills/tdd-workflow/SKILL.md": {
+      "sha256": "b6a8dd3e5215641cd9c33a46eae1d2b87508a07bc451e2c2fe25591f33a6b519",
+      "kind": "skill",
+      "id": "tdd-workflow"
+    },
+    "skills/verification-loop/SKILL.md": {
+      "sha256": "9ee288d426660b0c785f534a003a4960fb4d8083a21302d8a4fd9b035b2edbb1",
+      "kind": "skill",
+      "id": "verification-loop"
+    },
+    "agents/architect.md": {
+      "sha256": "6b8e1e8bd274995f3949691731f4334820c061d3054eaea3be2ce163386d1f24",
+      "kind": "agent",
+      "id": "architect"
+    },
+    "agents/build-error-resolver.md": {
+      "sha256": "acc9e14df59dd28d00f966b3a6cf0d9aeeda7e8a9ab7f1bc442466c0219c35ec",
+      "kind": "agent",
+      "id": "build-error-resolver"
+    },
+    "agents/code-reviewer.md": {
+      "sha256": "9dd23be23d65f18126e10f7680fc1eb2576ec54a427d076ff2f870bd0bafd5d2",
+      "kind": "agent",
+      "id": "code-reviewer"
+    },
+    "agents/doc-updater.md": {
+      "sha256": "5018d3a0bf740d2263fd4b7a92412d53a62d4be151a71221d6549cacba62d72c",
+      "kind": "agent",
+      "id": "doc-updater"
+    },
+    "agents/e2e-runner.md": {
+      "sha256": "94811f4bbc491c351cdf220ab103d6bd251fb1d88d9d46ba4c8162637a236a5b",
+      "kind": "agent",
+      "id": "e2e-runner"
+    },
+    "agents/harness-optimizer.md": {
+      "sha256": "54444fd46afdfacb87a885bef4dcef129915740d35b5fe6f07a5a7e804f2b053",
+      "kind": "agent",
+      "id": "harness-optimizer"
+    },
+    "agents/loop-operator.md": {
+      "sha256": "51f8283a56b799c2bd2c2455b3480e949656cbf997ea2feb34a972d3d6400f22",
+      "kind": "agent",
+      "id": "loop-operator"
+    },
+    "agents/planner.md": {
+      "sha256": "63aba865206bac9cb5887542fb01b97656e7701faff98e091aa77057ba9860bc",
+      "kind": "agent",
+      "id": "planner"
+    },
+    "agents/refactor-cleaner.md": {
+      "sha256": "13704c3aee163bcbf6bcbf7a7933630a70d6c312ff3ee5a29bff63b8800484cc",
+      "kind": "agent",
+      "id": "refactor-cleaner"
+    },
+    "commands/build-fix.md": {
+      "sha256": "2620e3b8733d227205b0d48c3ac0b68db026c6bb97a3049bf927917d7eb51189",
+      "kind": "command",
+      "id": "build-fix"
+    },
+    "commands/checkpoint.md": {
+      "sha256": "92926e49d18f18d52244f14d5f0962e69b2fc9c65dcf3b5775b1649a2aa494be",
+      "kind": "command",
+      "id": "checkpoint"
+    },
+    "commands/code-review.md": {
+      "sha256": "498f466567103f5466098a6e3b69b2794e380b76645440292667285801a70858",
+      "kind": "command",
+      "id": "code-review"
+    },
+    "commands/evolve.md": {
+      "sha256": "c8f94e2d2517539fd3e3cf05edb5a7187a887d76f2c936798e93e546f8b30ebb",
+      "kind": "command",
+      "id": "evolve"
+    },
+    "commands/harness-audit.md": {
+      "sha256": "dc420f85cdbfab6671338227b5673b4feed564c4294a12c304b6d79cf0346ec2",
+      "kind": "command",
+      "id": "harness-audit"
+    },
+    "commands/instinct-export.md": {
+      "sha256": "cd2052ae1b9c49f75ad81aae6e236be959cc6656d32e3b8f3e6e13d2d3bd2d3c",
+      "kind": "command",
+      "id": "instinct-export"
+    },
+    "commands/instinct-import.md": {
+      "sha256": "30514ada563953a1eafa46a09644831969aaae7672068777267e0b801814e7d9",
+      "kind": "command",
+      "id": "instinct-import"
+    },
+    "commands/instinct-status.md": {
+      "sha256": "7a99d6cf83c7a31f473fdda8a9be84d21ceb97ac51ba8802a7c768c7a2213c11",
+      "kind": "command",
+      "id": "instinct-status"
+    },
+    "commands/learn.md": {
+      "sha256": "8fbb0ee1f344f47f4f1b8595231338a28bdc0c015daa4644af3b343194bae0d1",
+      "kind": "command",
+      "id": "learn"
+    },
+    "commands/learn-eval.md": {
+      "sha256": "130ca626905237a4f6c75314c304f26a49f291794fc4a5e8e8747d7850db9082",
+      "kind": "command",
+      "id": "learn-eval"
+    },
+    "commands/loop-start.md": {
+      "sha256": "f12ce22d669072226a0df8a98f1421cc1318752e7a3e2d5eae0fe99cbb6f2f3c",
+      "kind": "command",
+      "id": "loop-start"
+    },
+    "commands/loop-status.md": {
+      "sha256": "74ca3ff7a7249f5d0bc7f87cdec882ef1f682ebc6567653eac5bb7ebaeae8b2e",
+      "kind": "command",
+      "id": "loop-status"
+    },
+    "commands/model-route.md": {
+      "sha256": "2e9789cb610bfa1a382dbaa46480a03aa976445d23b9ff719e4358bafa7292eb",
+      "kind": "command",
+      "id": "model-route"
+    },
+    "commands/multi-backend.md": {
+      "sha256": "ab0408f26ec89a0856ce30212f5828baec2162eaf98bac82366023497b8e6ae8",
+      "kind": "command",
+      "id": "multi-backend"
+    },
+    "commands/multi-execute.md": {
+      "sha256": "26bd2791fea77376866199dfe61fab3014a23563a507ac41cbdaa0a5b3ab02b4",
+      "kind": "command",
+      "id": "multi-execute"
+    },
+    "commands/multi-frontend.md": {
+      "sha256": "6bd7aa24a69de287762f4b1b9bbb7e5b9267e5de565d4dd058979f9ff2bba068",
+      "kind": "command",
+      "id": "multi-frontend"
+    },
+    "commands/multi-plan.md": {
+      "sha256": "127dac50706cf2b04e8819811655b97ef108a514fd74c2db7199f9c67b740119",
+      "kind": "command",
+      "id": "multi-plan"
+    },
+    "commands/multi-workflow.md": {
+      "sha256": "d2e3978fcd9f16ec9825ee02269ac0617d6fb1eb7962aecbaffd1c07108133bb",
+      "kind": "command",
+      "id": "multi-workflow"
+    },
+    "commands/plan.md": {
+      "sha256": "8d0caa8380eba2f2550937553c9c8c8f253c627cff662f0c333e6ad982706e3e",
+      "kind": "command",
+      "id": "plan"
+    },
+    "commands/projects.md": {
+      "sha256": "dc939242028d24119b985e6ad4fee3d6c8185f6bd19c716535384149bc9876f3",
+      "kind": "command",
+      "id": "projects"
+    },
+    "commands/promote.md": {
+      "sha256": "8d2faf47b1322c24a1dfa221b2f5e85b9e766fcd1d460c157c472246a3b86846",
+      "kind": "command",
+      "id": "promote"
+    },
+    "commands/refactor-clean.md": {
+      "sha256": "be911e404a89e79cc878e20ba28b0feeacc2350db8710624622d88a453bf13db",
+      "kind": "command",
+      "id": "refactor-clean"
+    },
+    "commands/resume-session.md": {
+      "sha256": "b09bcb22feb10adbba50accd5dd97d09b60897aa94d05c6c12b6e579cb69cbac",
+      "kind": "command",
+      "id": "resume-session"
+    },
+    "commands/save-session.md": {
+      "sha256": "a9488a8819d6c65fe4777f07ea72de6b0c4ee94f90c6bb33b3b8841916222db4",
+      "kind": "command",
+      "id": "save-session"
+    },
+    "commands/sessions.md": {
+      "sha256": "c605840846665ee89ce7c8897f458eab546c526e3f0a0523d766deb0a014ac60",
+      "kind": "command",
+      "id": "sessions"
+    },
+    "commands/setup-pm.md": {
+      "sha256": "163b3cd106028d21dbd2a91b47f1cf99957e40a78ed9e5e5dc8507e225f73a2d",
+      "kind": "command",
+      "id": "setup-pm"
+    },
+    "commands/skill-create.md": {
+      "sha256": "d90b882c5af825951a1b99e82b40c2ea9c611dab5d2aab26bc2da7a26aab1fc8",
+      "kind": "command",
+      "id": "skill-create"
+    },
+    "commands/test-coverage.md": {
+      "sha256": "f492c2dac27b98118cf965ae3071e044d7292ae9299e661bb01e2e6109d20711",
+      "kind": "command",
+      "id": "test-coverage"
+    },
+    "commands/update-codemaps.md": {
+      "sha256": "dee7709ae4044862fd947e17048f8af170145b70ac53dfe01caa672a903853ea",
+      "kind": "command",
+      "id": "update-codemaps"
+    },
+    "commands/update-docs.md": {
+      "sha256": "f0f4645d697c7c5874b79c64218cd2057a291cc6301f6a044cb2bac5ccc14f4a",
+      "kind": "command",
+      "id": "update-docs"
+    },
+    "commands/e2e.md": {
+      "sha256": "97ef29c9355344bd25b4e963e519f3eaf5b0c6f43a9174f47c9c5d1b4dbb579e",
+      "kind": "shim",
+      "id": "e2e"
+    },
+    "commands/eval.md": {
+      "sha256": "34b2e2386e57aa329abcab225c6baa8fb4dfad0162741788656c74825fbf27c8",
+      "kind": "shim",
+      "id": "eval"
+    },
+    "commands/orchestrate.md": {
+      "sha256": "d1d95cf500e98fa89eec16971c39e4be54659d334b3e9d0abbe96e4fcf54616a",
+      "kind": "shim",
+      "id": "orchestrate"
+    },
+    "commands/prompt-optimize.md": {
+      "sha256": "fd1f31a9bc5d6f21e2c69bc9da6fc4d1cc57aed474bdd517e5493f701abc4f53",
+      "kind": "shim",
+      "id": "prompt-optimize"
+    },
+    "commands/tdd.md": {
+      "sha256": "0239245569fbd46c7f0d2b40390d1c7c3e2bbdbbae580c2153234d8e2cee0acd",
+      "kind": "shim",
+      "id": "tdd"
+    },
+    "commands/verify.md": {
+      "sha256": "4cd8df723451c33735b6dd6ab43c9161b388e32a0a7804f78d759123c9de15e8",
+      "kind": "shim",
+      "id": "verify"
+    }
+  }
+}

@@ -1,0 +1,75 @@
+name: Ephemeral Live Preview Tunnel
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: 'How many minutes to keep the live tunnel open (1-60)'
+        required: false
+        default: '15'
+        type: choice
+        options:
+          - '5'
+          - '15'
+          - '30'
+          - '60'
+      provider:
+        description: 'Zero-secret tunnel provider'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - 'auto'
+          - 'cloudflared'
+          - 'localhost.run'
+          - 'localtunnel'
+      port:
+        description: 'Server HTTP port'
+        required: false
+        default: '3000'
+        type: string
+  pull_request:
+    types:
+      - labeled
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: live-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  live-preview:
+    name: Start Ephemeral Live Preview
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.label.name == 'live-preview')
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start server and open live preview tunnel
+        id: preview
+        uses: ./.github/actions/live-preview
+        with:
+          port: ${{ inputs.port || '3000' }}
+          command: npm run dashboard
+          minutes: ${{ inputs.minutes || '15' }}
+          provider: ${{ inputs.provider || 'auto' }}
+          health_path: /api/health
+          discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          comment_on_pr: 'true'
+          github_token: ${{ github.token }}
+
+      - name: Print outputs
+        run: |
+          echo "Live Preview URL: ${{ steps.preview.outputs.url }}"
+          echo "Provider: ${{ steps.preview.outputs.provider }}"
+          echo "Expires at: ${{ steps.preview.outputs.expires_at }}"

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark" data-tint="blue">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#000000" id="meta-theme-color">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Aether ECC">
+  <meta name="description" content="Native-Like Apple iOS 27.1.3 Liquid Glass UI & Design Tokens PWA for Aether ECC.">
+  <title>Aether // ECC — iOS 27.1.3 Liquid Glass</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="/styles.css?v=27.1.5">
+</head>
+<body>
+  <!-- iOS 27 Top & Bottom Scroll Edge Blur / Fade Masks (matches scrollView.topEdgeEffect / bottomEdgeEffect) -->
+  <div class="scroll-edge-top" aria-hidden="true"></div>
+  <div class="scroll-edge-bottom" aria-hidden="true"></div>
+
+  <!-- Native iOS 27 Floating Top Navigation Bar (Separated 44px Liquid Glass Clusters + Collapsing Inline Title) -->
+  <header class="ios-navbar" id="ios-navbar">
+    <div class="navbar-inner">
+      <div class="navbar-leading">
+        <div class="glass-cluster glass-pill refract-pill" id="brand-pill">
+          <div class="brand-orb" aria-hidden="true">
+            <span class="brand-star"></span>
+          </div>
+          <div class="brand-meta">
+            <span class="brand-title">Aether ECC</span>
+          </div>
+          <span class="live-chip" id="connection-pill" role="status" aria-live="polite">
+            <span class="pulse-dot" id="connection-dot"></span>
+            <span id="connection-label">Live</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="navbar-inline-title" id="navbar-inline-title" aria-hidden="true">Control Surface</div>
+
+      <div class="navbar-trailing">
+        <div class="glass-cluster toolbar-44 glass-pill refract-pill" role="group" aria-label="Appearance, language, and install">
+          <button type="button" class="toolbar-icon-btn" id="btn-lang" aria-label="Switch language">
+            <span id="lang-badge">FA</span>
+          </button>
+          <button type="button" class="toolbar-icon-btn" id="btn-theme" aria-label="Toggle dark or light appearance">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+          </button>
+          <button type="button" class="toolbar-icon-btn" id="btn-install-pwa" aria-label="Install app">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3v11m0 0-4-4m4 4 4-4"/>
+              <path d="M5 17v1.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V17"/>
+            </svg>
+          </button>
+        </div>
+
+        <button type="button" class="glass-circle-44 glass-pill refract-pill interactive-glass" id="btn-more-actions" aria-label="Open iOS 27 Action Sheet">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="5.5" cy="12" r="1.75"/>
+            <circle cx="12" cy="12" r="1.75"/>
+            <circle cx="18.5" cy="12" r="1.75"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <main class="main-stage" id="main-stage">
+      <!-- VIEW 1: PULSE / OVERVIEW -->
+      <section class="view is-active" id="view-pulse" aria-labelledby="nav-pulse">
+        <div class="ios-large-header" data-scroll-title="Control Surface">
+          <div class="ios-large-copy">
+            <span class="ios-eyebrow" data-i18n="heroEyebrow">APPLE iOS 27.1.3 · LIQUID GLASS</span>
+            <h1 class="ios-large-title" data-i18n="heroTitle">Control Surface</h1>
+          </div>
+          <button type="button" class="ios-appearance-pill glass-pill refract-pill interactive-glass" id="btn-quick-tokens">
+            <span class="tint-swatch-mini"></span>
+            <span data-i18n="iosKitShort">27.1.3 Tokens</span>
+          </button>
+        </div>
+
+        <!-- iOS 27 Optical Glass Showcase Hero (Silk Wallpaper Layer Behind True Liquid Glass Surfaces) -->
+        <article class="ios-showcase-card" aria-label="Orchestration Summary">
+          <div class="showcase-wallpaper" aria-hidden="true">
+            <div class="silk-blob silk-1"></div>
+            <div class="silk-blob silk-2"></div>
+            <div class="silk-blob silk-3"></div>
+            <div class="showcase-grid-sheen"></div>
+          </div>
+
+          <div class="showcase-glass-deck refract-card">
+            <div class="hero-top">
+              <div class="hero-copy">
+                <span class="showcase-tag glass-pill">Aether ECC v2.2.3</span>
+                <h2 class="hero-headline" data-i18n="heroHeadline">Neural Orchestration</h2>
+                <p class="hero-desc" data-i18n="heroDesc">Real-time orchestration across curated ECC skills, specialized agents, and adaptive workflows.</p>
+              </div>
+              <div class="orbital-gauge" aria-label="Neural Readiness Score">
+                <svg viewBox="0 0 120 120" class="gauge-svg">
+                  <circle class="gauge-track" cx="60" cy="60" r="48"/>
+                  <circle class="gauge-arc" id="gauge-arc" cx="60" cy="60" r="48"/>
+                </svg>
+                <div class="gauge-center">
+                  <span class="gauge-value tabular" id="readiness-score">96%</span>
+                  <span class="gauge-label" data-i18n="readiness">Ready</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-meta-row">
+              <div class="glass-metric-tile glass-clear-box">
+                <span class="meta-k" data-i18n="cpuLoad">CPU</span>
+                <span class="meta-v tabular" id="stat-cpu">--%</span>
+              </div>
+              <div class="glass-metric-tile glass-clear-box">
+                <span class="meta-k" data-i18n="memUsed">RAM</span>
+                <span class="meta-v tabular" id="stat-mem">--%</span>
+              </div>
+              <div class="glass-metric-tile glass-clear-box">
+                <span class="meta-k" data-i18n="targetsOnline">Targets</span>
+                <span class="meta-v tabular" id="stat-targets">--</span>
+              </div>
+              <div class="glass-metric-tile glass-clear-box">
+                <span class="meta-k" data-i18n="uptime">Uptime</span>
+                <span class="meta-v tabular" id="stat-uptime">0s</span>
+              </div>
+            </div>
+
+            <div class="quick-actions-row">
+              <button type="button" class="ios-btn ios-btn-prominent interactive-glass" data-action="audit">
+                <span data-i18n="actAudit">Run Audit</span>
+              </button>
+              <button type="button" class="ios-btn ios-btn-glass refract-pill interactive-glass" data-action="sync-arena">
+                <span data-i18n="actSyncArena">Sync Arena</span>
+              </button>
+              <button type="button" class="ios-btn ios-btn-glass refract-pill interactive-glass" data-action="telemetry-pulse">
+                <span data-i18n="actPulse">Refresh Telemetry</span>
+              </button>
+              <button type="button" class="ios-btn ios-btn-glass refract-pill interactive-glass" id="btn-open-ai-from-hero">
+                <span data-i18n="actOptimize">AI Prompt Router</span>
+              </button>
+            </div>
+
+            <!-- iOS 27.1.3 P24 4px Determinate Progress + 8-Blade Activity Spinner + P22 24px Ultrathin Page Control -->
+            <div class="ios-kit-telemetry-bar">
+              <div class="ios-spinner-20" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="ios-progress-group">
+                <div class="ios-progress-meta">
+                  <span data-i18n="kitSyncTrackLabel">Optical Kit Parity · 4pt Track</span>
+                  <span class="tabular" id="hero-progress-pct">94%</span>
+                </div>
+                <div class="ios-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="94" id="hero-progressbar">
+                  <div class="ios-progress-fill" id="hero-progress-fill"></div>
+                </div>
+              </div>
+              <div class="ios-page-control" id="ios-page-control" aria-label="Views Page Control">
+                <button type="button" class="ios-page-dot is-active" data-page-view="pulse" aria-label="Pulse"></button>
+                <button type="button" class="ios-page-dot" data-page-view="catalog" aria-label="Catalog"></button>
+                <button type="button" class="ios-page-dot" data-page-view="ai" aria-label="Command AI"></button>
+                <button type="button" class="ios-page-dot is-tapered" data-page-view="system" aria-label="System"></button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Native iOS 27 Widget Summary Strip (Crisp Inset Grouped Widgets, 2x2 mobile / 4x1 tablet+) -->
+        <div class="kpi-widget-grid" aria-label="Catalog summary metrics">
+          <button type="button" class="ios-widget-card interactive-glass" data-jump-filter="skill">
+            <div class="widget-top">
+              <span class="ios-app-icon bg-ios-blue" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
+              </span>
+              <span class="kpi-val tabular" id="kpi-skills">21</span>
+            </div>
+            <div class="widget-bottom">
+              <strong data-i18n="kpiSkills">Skills</strong>
+              <small data-i18n="kpiSkillsSub">Workflows & TDD</small>
+            </div>
+          </button>
+
+          <button type="button" class="ios-widget-card interactive-glass" data-jump-filter="agent">
+            <div class="widget-top">
+              <span class="ios-app-icon bg-ios-green" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="3"/><path d="M9 13v2M15 13v2"/></svg>
+              </span>
+              <span class="kpi-val tabular" id="kpi-agents">9</span>
+            </div>
+            <div class="widget-bottom">
+              <strong data-i18n="kpiAgents">Agents</strong>
+              <small data-i18n="kpiAgentsSub">Architect & Review</small>
+            </div>
+          </button>
+
+          <button type="button" class="ios-widget-card interactive-glass" data-jump-filter="command">
+            <div class="widget-top">
+              <span class="ios-app-icon bg-ios-indigo" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+              </span>
+              <span class="kpi-val tabular" id="kpi-commands">30</span>
+            </div>
+            <div class="widget-bottom">
+              <strong data-i18n="kpiCommands">Commands</strong>
+              <small data-i18n="kpiCommandsSub">Plans & Sessions</small>
+            </div>
+          </button>
+
+          <button type="button" class="ios-widget-card interactive-glass" data-jump-filter="shim">
+            <div class="widget-top">
+              <span class="ios-app-icon bg-ios-orange" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </span>
+              <span class="kpi-val tabular" id="kpi-shims">6</span>
+            </div>
+            <div class="widget-bottom">
+              <strong data-i18n="kpiShims">Shims</strong>
+              <small data-i18n="kpiShimsSub">Legacy Aliases</small>
+            </div>
+          </button>
+        </div>
+
+        <div class="bento-two-col">
+          <!-- Telemetry Card with Native Spring Segmented Control -->
+          <div class="ios-section-wrap">
+            <div class="ios-section-header">
+              <h2 class="ios-section-header-label" data-i18n="chartTitle">NEURAL TELEMETRY VELOCITY</h2>
+            </div>
+            <article class="ios-grouped-card">
+              <div class="card-header-row">
+                <div>
+                  <p class="card-sub" id="chart-readout" data-i18n="chartSub">Interactive load & throughput waveform</p>
+                </div>
+                <div class="ios-segmented" id="telemetry-segmented" role="tablist" aria-label="Telemetry timeframe">
+                  <div class="seg-thumb" aria-hidden="true"></div>
+                  <button type="button" class="seg-btn is-active" data-window="1m">1M</button>
+                  <button type="button" class="seg-btn" data-window="15m">15M</button>
+                  <button type="button" class="seg-btn" data-window="1h">1H</button>
+                </div>
+              </div>
+              <div class="chart-wrap" id="chart-wrap">
+                <svg id="telemetry-svg" viewBox="0 0 360 150" preserveAspectRatio="none" aria-label="System telemetry chart">
+                  <defs>
+                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--accent-1)" stop-opacity="0.34"/>
+                      <stop offset="100%" stop-color="var(--accent-1)" stop-opacity="0.0"/>
+                    </linearGradient>
+                    <linearGradient id="lineGrad" x1="0" y1="0" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="var(--accent-1)"/>
+                      <stop offset="100%" stop-color="var(--accent-2)"/>
+                    </linearGradient>
+                  </defs>
+                  <line class="chart-grid-line" x1="0" y1="38" x2="360" y2="38"/>
+                  <line class="chart-grid-line" x1="0" y1="75" x2="360" y2="75"/>
+                  <line class="chart-grid-line" x1="0" y1="112" x2="360" y2="112"/>
+                  <path id="chart-area" fill="url(#areaGrad)"/>
+                  <path id="chart-line" fill="none" stroke="url(#lineGrad)" stroke-width="2.6" stroke-linecap="round"/>
+                  <line id="chart-crosshair" class="chart-crosshair" x1="0" y1="0" x2="0" y2="150" opacity="0"/>
+                  <circle id="chart-focus-dot" r="5" cx="0" cy="0" opacity="0"/>
+                </svg>
+                <div class="chart-tooltip glass-pill tabular" id="chart-tooltip" hidden>--%</div>
+              </div>
+            </article>
+            <p class="ios-section-footer" data-i18n="chartFooter">Scrub horizontally across the chart to sample telemetry points.</p>
+          </div>
+
+          <!-- Native iOS 27 Inset Grouped Table View: Autonomous Scenes with Interactive Glass Morph Toggles -->
+          <div class="ios-section-wrap">
+            <div class="ios-section-header">
+              <h2 class="ios-section-header-label" data-i18n="loopsTitle">AUTONOMOUS SCENES</h2>
+              <span class="ios-section-header-note" data-i18n="loopsSub">Tap or drag switches</span>
+            </div>
+            <div class="ios-grouped-list" id="loops-list">
+              <label class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-green" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.3 4.3-2.5 5.7-.7.8-1 1.5-1 2.3H8.5c0-.8-.3-1.5-1-2.3C6.3 13.3 5 11.5 5 9a7 7 0 0 1 7-7Z"/><path d="M9 21h6"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong>continuous-learning-v2</strong>
+                    <small data-i18n="loopLearningDesc">Capture instincts & project patterns</small>
+                  </span>
+                </span>
+                <span class="ios-switch-wrap">
+                  <input type="checkbox" class="ios-switch" data-loop="continuous-learning-v2" checked>
+                  <span class="ios-switch-knob" aria-hidden="true"></span>
+                </span>
+              </label>
+
+              <label class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong>verification-loop</strong>
+                    <small data-i18n="loopVerifyDesc">Pre-commit lint, types & test gate</small>
+                  </span>
+                </span>
+                <span class="ios-switch-wrap">
+                  <input type="checkbox" class="ios-switch" data-loop="verification-loop" checked>
+                  <span class="ios-switch-knob" aria-hidden="true"></span>
+                </span>
+              </label>
+
+              <label class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-indigo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong>strategic-compact</strong>
+                    <small data-i18n="loopCompactDesc">Adaptive context window compaction</small>
+                  </span>
+                </span>
+                <span class="ios-switch-wrap">
+                  <input type="checkbox" class="ios-switch" data-loop="strategic-compact" checked>
+                  <span class="ios-switch-knob" aria-hidden="true"></span>
+                </span>
+              </label>
+
+              <label class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-orange" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="16" rx="2"/><rect x="14" y="4" width="7" height="16" rx="2"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong>dmux-workflows</strong>
+                    <small data-i18n="loopDmuxDesc">Multi-worktree parallel execution</small>
+                  </span>
+                </span>
+                <span class="ios-switch-wrap">
+                  <input type="checkbox" class="ios-switch" data-loop="dmux-workflows">
+                  <span class="ios-switch-knob" aria-hidden="true"></span>
+                </span>
+              </label>
+            </div>
+            <p class="ios-section-footer" data-i18n="loopsFooter">Press and hold or slide any switch to preview iOS 27 Liquid Glass lens morphing.</p>
+          </div>
+        </div>
+
+        <!-- Native Inset Grouped Activity Stream -->
+        <div class="ios-section-wrap">
+          <div class="ios-section-header">
+            <h2 class="ios-section-header-label" data-i18n="activityTitle">NEURAL ACTIVITY STREAM</h2>
+            <span class="ios-section-header-note tabular" id="activity-count">0</span>
+          </div>
+          <ul class="ios-grouped-list activity-list" id="activity-list"></ul>
+        </div>
+      </section>
+
+      <!-- VIEW 2: CATALOG -->
+      <section class="view" id="view-catalog" aria-labelledby="nav-catalog" hidden>
+        <div class="ios-large-header" data-scroll-title="Catalog">
+          <div class="ios-large-copy">
+            <span class="ios-eyebrow" data-i18n="catalogEyebrow">CURATED REPOSITORY</span>
+            <h1 class="ios-large-title" data-i18n="navCatalog">Catalog</h1>
+          </div>
+          <span class="ios-count-badge glass-pill tabular" id="catalog-match-count">66</span>
+        </div>
+
+        <div class="ios-grouped-card catalog-controls">
+          <div class="ios-search-field">
+            <svg class="icon-svg search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="search" id="catalog-search" placeholder="Search 66 skills, agents, commands..." data-i18n-placeholder="searchPlaceholder" autocomplete="off">
+            <button type="button" class="search-clear-btn" id="catalog-search-clear" aria-label="Clear search" hidden>✕</button>
+          </div>
+
+          <div class="filter-strip" id="catalog-filters" role="tablist">
+            <button type="button" class="filter-chip is-active" data-kind="all" data-i18n="filterAll">All</button>
+            <button type="button" class="filter-chip" data-kind="skill" data-i18n="filterSkill">Skills (21)</button>
+            <button type="button" class="filter-chip" data-kind="agent" data-i18n="filterAgent">Agents (9)</button>
+            <button type="button" class="filter-chip" data-kind="command" data-i18n="filterCommand">Commands (30)</button>
+            <button type="button" class="filter-chip" data-kind="shim" data-i18n="filterShim">Shims (6)</button>
+          </div>
+        </div>
+
+        <div class="catalog-grid" id="catalog-grid"></div>
+      </section>
+
+      <!-- VIEW 3: COMMAND AI / INTENT ROUTER -->
+      <section class="view" id="view-ai" aria-labelledby="nav-ai" hidden>
+        <div class="ios-large-header" data-scroll-title="Command AI">
+          <div class="ios-large-copy">
+            <span class="ios-eyebrow" data-i18n="aiEyebrow">PROMPT OPTIMIZER & ROUTER</span>
+            <h1 class="ios-large-title" data-i18n="navAi">Command AI</h1>
+          </div>
+        </div>
+
+        <article class="ios-grouped-card ai-card">
+          <div>
+            <h2 class="card-title" data-i18n="aiTitle">Match Task to ECC Components</h2>
+            <p class="card-sub" data-i18n="aiDesc">Describe what you want to build or verify (English or Persian). The router finds the best skills, agents, and commands and generates an instant ecc-install command.</p>
+          </div>
+
+          <form class="ai-form" id="ai-form">
+            <div class="ai-input-wrap">
+              <input type="text" id="ai-input" placeholder="e.g. Playwright E2E tests, Liquid Glass UI, security audit..." data-i18n-placeholder="aiPlaceholder" autocomplete="off">
+              <button type="submit" class="ios-btn ios-btn-prominent send-btn" data-i18n="aiRun">Synthesize</button>
+            </div>
+          </form>
+
+          <div class="ai-presets">
+            <button type="button" class="preset-chip glass-pill interactive-glass" data-query="liquid-glass frontend ui design">Liquid Glass UI</button>
+            <button type="button" class="preset-chip glass-pill interactive-glass" data-query="tdd e2e verification test coverage">TDD + E2E + Verify</button>
+            <button type="button" class="preset-chip glass-pill interactive-glass" data-query="architect blueprint database migrations">Architecture + DB</button>
+            <button type="button" class="preset-chip glass-pill interactive-glass" data-query="بررسی امنیت کد و ریفکتور">امنیت و ریفکتور</button>
+          </div>
+
+          <div class="ai-command-box" id="ai-command-box" hidden>
+            <div class="ai-command-head">
+              <span data-i18n="generatedCmd">Generated CLI Command</span>
+              <div class="ai-command-actions">
+                <button type="button" class="ios-btn ios-btn-small ios-btn-glass" id="btn-copy-cmd" data-i18n="copy">Copy</button>
+                <button type="button" class="ios-btn ios-btn-small ios-btn-prominent" id="btn-dryrun-cmd" data-i18n="dryRun">Dry-Run</button>
+              </div>
+            </div>
+            <code class="cmd-code" id="ai-cmd-text"></code>
+          </div>
+
+          <div class="ai-results-grid" id="ai-results-grid"></div>
+        </article>
+      </section>
+
+      <!-- VIEW 4: SYSTEM, TARGETS & NATIVE iOS 27 DESIGN TOKENS STUDIO -->
+      <section class="view" id="view-system" aria-labelledby="nav-system" hidden>
+        <div class="ios-large-header" data-scroll-title="System">
+          <div class="ios-large-copy">
+            <span class="ios-eyebrow" data-i18n="systemEyebrow">HARNESS & iOS 27.1.3 TOKENS</span>
+            <h1 class="ios-large-title" data-i18n="navSystem">System</h1>
+          </div>
+          <button type="button" class="ios-btn ios-btn-small ios-btn-prominent" data-action="sync-arena" data-i18n="actSyncArena">Sync Arena</button>
+        </div>
+
+        <div class="bento-two-col">
+          <!-- Native Inset Grouped Target List -->
+          <div class="ios-section-wrap">
+            <div class="ios-section-header">
+              <h2 class="ios-section-header-label" data-i18n="targetsTitle">AGENT INSTALL TARGETS</h2>
+            </div>
+            <div class="ios-grouped-list targets-list" id="targets-list"></div>
+            <p class="ios-section-footer" data-i18n="targetsSub">Tap any target row to run a live installation dry-run parity check.</p>
+
+            <!-- Native iOS 27.1.3 12-Color System Palette (Hydrated directly from ios27-tokens.json) -->
+            <div class="ios-section-header" style="margin-top: 10px;">
+              <h2 class="ios-section-header-label" data-i18n="paletteSectionTitle">NATIVE iOS 27.1.3 SYSTEM COLORS</h2>
+            </div>
+            <div class="ios-grouped-card swatch-matrix-card">
+              <div class="swatch-grid" id="ios27-swatch-grid"></div>
+              <div class="swatch-readout" id="swatch-readout">
+                <span class="swatch-readout-name">System Blue</span>
+                <code class="swatch-readout-hex tabular" id="swatch-readout-hex">Dark #0091FF · Light #0088FF</code>
+              </div>
+            </div>
+
+            <div class="ios-grouped-list">
+              <button type="button" class="ios-list-row ios-list-btn" id="btn-inspect-tokens">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22a8 8 0 0 0 8-8c0-1.5-.8-2.3-2-2.3h-2.2c-1 0-1.8-.8-1.8-1.8 0-.6.2-1 .5-1.5.5-.7.5-1.7 0-2.4A8 8 0 1 0 12 22Z"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong data-i18n="tokensRowTitle">iOS 27 Design Tokens & Specs</strong>
+                    <small id="tokens-meta-sub">107 swatches · 42 layer styles · 105 text styles</small>
+                  </span>
+                </span>
+                <span class="ios-row-trailing">
+                  <span class="ios-trailing-val tabular" id="tokens-accent-hex">#0091FF</span>
+                  <span class="ios-chevron" aria-hidden="true">›</span>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Grouped Liquid Glass & Native Controls Lab -->
+          <div class="ios-section-wrap">
+            <div class="ios-section-header">
+              <h2 class="ios-section-header-label" data-i18n="glassLabTitle">LIQUID GLASS & APPEARANCE</h2>
+            </div>
+
+            <div class="ios-grouped-list lab-controls">
+              <div class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-pink" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong data-i18n="tintLabel">System Tint</strong>
+                    <small data-i18n="tintSub">iOS 27 system colors</small>
+                  </span>
+                </span>
+                <div class="tint-dots">
+                  <button type="button" class="tint-dot is-active" data-set-tint="blue" aria-label="iOS 27 System Blue"></button>
+                  <button type="button" class="tint-dot" data-set-tint="cyan" aria-label="iOS 27 System Cyan"></button>
+                  <button type="button" class="tint-dot" data-set-tint="indigo" aria-label="iOS 27 System Indigo"></button>
+                  <button type="button" class="tint-dot" data-set-tint="mint" aria-label="iOS 27 System Mint"></button>
+                  <button type="button" class="tint-dot" data-set-tint="pink" aria-label="iOS 27 System Pink"></button>
+                </div>
+              </div>
+
+              <div class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-cyan" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <label for="blur-range" data-i18n="blurLabel">Glass Blur</label>
+                    <small class="tabular" id="blur-val">30px</small>
+                  </span>
+                </span>
+                <div class="ios-slider-shell" id="blur-slider-shell">
+                  <div class="ios-slider-track">
+                    <div class="ios-slider-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="ios-slider-fill" id="blur-slider-fill"></div>
+                  </div>
+                  <div class="ios-slider-thumb" id="blur-slider-thumb" aria-hidden="true"></div>
+                  <input type="range" class="ios-slider" id="blur-range" min="6" max="45" value="30">
+                </div>
+              </div>
+
+              <label class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-indigo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M4 6h10M4 18h13"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong data-i18n="reducedMotion">Reduced Motion</strong>
+                    <small data-i18n="reducedMotionDesc">Disable ambient drift & spring physics</small>
+                  </span>
+                </span>
+                <span class="ios-switch-wrap">
+                  <input type="checkbox" class="ios-switch" id="toggle-motion">
+                  <span class="ios-switch-knob" aria-hidden="true"></span>
+                </span>
+              </label>
+
+              <div class="ios-list-row">
+                <span class="ios-row-leading">
+                  <span class="ios-app-icon bg-ios-teal" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                  </span>
+                  <span class="ios-row-text">
+                    <strong data-i18n="swStatus">Service Worker</strong>
+                    <small id="cache-state">Standby</small>
+                  </span>
+                </span>
+                <span class="ios-trailing-val" id="sw-state">Checking...</span>
+              </div>
+
+              <div class="ios-list-row pwa-actions-row">
+                <button type="button" class="ios-btn ios-btn-small ios-btn-glass" id="btn-open-native-alert" data-i18n="testAlert">Alert</button>
+                <button type="button" class="ios-btn ios-btn-small ios-btn-glass" id="btn-open-action-sheet" data-i18n="testActionSheet">Action Sheet</button>
+                <button type="button" class="ios-btn ios-btn-small ios-btn-glass" id="btn-refresh-cache" data-i18n="refreshCache">Refresh Cache</button>
+                <button type="button" class="ios-btn ios-btn-small ios-btn-prominent" id="btn-install-pwa-2" data-i18n="installApp">Install PWA</button>
+              </div>
+            </div>
+            <p class="ios-section-footer" data-i18n="glassLabSub">Drag the blur slider to see the 37×24px pill morph into Apple's 57×38px refractive Liquid Glass lens.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Native iOS 27 Floating Liquid Glass Tab Bar (62px capsule + draggable Glass Lens + detached 62x62 Search Orb) -->
+  <div class="dock-shell">
+    <nav class="bottom-dock glass-pill refract-pill" aria-label="Primary navigation">
+      <div class="dock-track" id="dock-track" role="tablist" aria-label="Views">
+        <div class="dock-indicator" id="dock-indicator" aria-hidden="true"></div>
+        <button type="button" class="dock-tab is-active" id="nav-pulse" data-view="pulse" role="tab" aria-selected="true">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12h4l3-7 4 14 3-7h4"/>
+          </svg>
+          <span data-i18n="navPulse">Pulse</span>
+        </button>
+        <button type="button" class="dock-tab" id="nav-catalog" data-view="catalog" role="tab" aria-selected="false">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="2"/>
+            <rect x="14" y="3" width="7" height="7" rx="2"/>
+            <rect x="3" y="14" width="7" height="7" rx="2"/>
+            <rect x="14" y="14" width="7" height="7" rx="2"/>
+          </svg>
+          <span data-i18n="navCatalog">Catalog</span>
+        </button>
+        <button type="button" class="dock-tab" id="nav-ai" data-view="ai" role="tab" aria-selected="false">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3Z"/>
+            <path d="M5 17l.9 2.1L8 20l-2.1.9L5 23l-.9-2.1L2 20l2.1-.9L5 17Z"/>
+          </svg>
+          <span data-i18n="navAi">Command AI</span>
+        </button>
+        <button type="button" class="dock-tab" id="nav-system" data-view="system" role="tab" aria-selected="false">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.77 1 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+          </svg>
+          <span data-i18n="navSystem">System</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Detached iOS 27 Tab Bar Search Orb (62x62px per Apple Sketch Tab Bars spec) -->
+    <button type="button" class="dock-search-orb glass-pill refract-pill interactive-glass" id="btn-dock-search" aria-label="Quick Search Catalog">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Native iOS 27 Liquid Glass Sheet Modal (34px radius, 60x4px grabber, swipe-down dismiss, 34x34 Close Button) -->
+  <div class="sheet-backdrop" id="sheet-backdrop" hidden>
+    <aside class="glass-sheet refract-card" id="component-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-handle-zone" id="sheet-handle-zone" aria-label="Drag down to dismiss">
+        <div class="sheet-handle" aria-hidden="true"></div>
+      </div>
+      <div class="sheet-toolbar">
+        <div class="sheet-title-group">
+          <span class="kind-badge glass-pill" id="sheet-kind">skill</span>
+          <h2 class="sheet-title" id="sheet-title">Component</h2>
+        </div>
+        <button type="button" class="sheet-close-btn glass-pill refract-pill" id="sheet-close" aria-label="Close">✕</button>
+      </div>
+      <p class="sheet-desc" id="sheet-desc"></p>
+      <div class="sheet-actions" id="sheet-actions-row">
+        <button type="button" class="ios-btn ios-btn-small ios-btn-prominent" id="sheet-dryrun" data-i18n="previewArena">Dry-Run (Arena)</button>
+        <button type="button" class="ios-btn ios-btn-small ios-btn-glass" id="sheet-copy" data-i18n="copyCmd">Copy Install Cmd</button>
+      </div>
+      <pre class="sheet-code" id="sheet-body"></pre>
+    </aside>
+  </div>
+
+  <!-- Native iOS 27 Liquid Glass Action Sheet (34px Glass Container + 48px Capsule Buttons + Cancel) -->
+  <div class="action-sheet-backdrop" id="action-sheet-backdrop" hidden>
+    <div class="ios-action-sheet" role="dialog" aria-modal="true" aria-label="Harness Quick Actions">
+      <div class="action-sheet-group glass-medium-panel refract-card">
+        <div class="action-sheet-header">
+          <strong>Aether ECC · iOS 27.1.3</strong>
+          <small data-i18n="actionSheetSub">Select a native system action</small>
+        </div>
+        <button type="button" class="action-sheet-btn action-primary" data-sheet-action="audit" data-i18n="actAudit">Run Audit</button>
+        <button type="button" class="action-sheet-btn" data-sheet-action="sync-arena" data-i18n="actSyncArena">Sync Arena</button>
+        <button type="button" class="action-sheet-btn" data-sheet-action="telemetry-pulse" data-i18n="actPulse">Refresh Telemetry</button>
+        <button type="button" class="action-sheet-btn" id="btn-sheet-alert" data-i18n="previewAlertAction">Preview Native iOS 27 Alert</button>
+        <button type="button" class="action-sheet-btn" id="btn-sheet-tokens" data-i18n="tokensRowTitle">iOS 27 Design Tokens & Specs</button>
+        <button type="button" class="action-sheet-btn" id="btn-sheet-theme" data-i18n="toggleThemeAction">Switch Dark / Light Appearance</button>
+      </div>
+      <button type="button" class="action-sheet-cancel glass-medium-panel refract-pill" id="btn-action-sheet-cancel" data-i18n="cancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Native iOS 27 Alert Dialog (Sketch P13 Alerts: 300px wide, r=34px, t4 r=30 blur, 48px capsule buttons) -->
+  <div class="alert-backdrop" id="alert-backdrop" hidden>
+    <div class="ios-alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="ios-alert-title" aria-describedby="ios-alert-msg">
+      <h2 class="ios-alert-title" id="ios-alert-title" data-i18n="alertTitle">Sync Aether ECC Harness?</h2>
+      <p class="ios-alert-msg" id="ios-alert-msg" data-i18n="alertMsg">Verifies 66 curated skills, agents, commands, and iOS 27.1.3 design tokens across all workspace targets.</p>
+      <div class="ios-alert-buttons">
+        <button type="button" class="ios-alert-btn ios-alert-primary" id="btn-alert-primary" data-i18n="actSyncArena">Sync Arena</button>
+        <button type="button" class="ios-alert-btn ios-alert-destructive" id="btn-alert-destructive" data-i18n="refreshCache">Refresh Cache</button>
+        <button type="button" class="ios-alert-btn ios-alert-secondary" id="btn-alert-cancel" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast glass-pill refract-pill" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="/app.js?v=27.1.5"></script>
+</body>
+</html>

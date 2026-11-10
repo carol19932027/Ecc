@@ -1,0 +1,72 @@
+name: 'Aether Live Preview Action'
+description: 'Start the project server, verify health, open a zero-secret ephemeral HTTPS live preview tunnel, and notify PRs / Step Summary / optional Discord.'
+branding:
+  icon: 'globe'
+  color: 'blue'
+
+inputs:
+  port:
+    description: 'Local HTTP port the application server listens on'
+    required: false
+    default: '3000'
+  command:
+    description: 'Command used to start the server'
+    required: false
+    default: 'npm run dashboard'
+  minutes:
+    description: 'Duration (in minutes) to keep the live tunnel open (0 exits after health check and notification)'
+    required: false
+    default: '15'
+  provider:
+    description: 'Tunnel provider: auto, cloudflared, localhost.run, localtunnel, or none'
+    required: false
+    default: 'auto'
+  health_path:
+    description: 'HTTP path used to verify local server readiness before opening the tunnel'
+    required: false
+    default: '/api/health'
+  startup_timeout_seconds:
+    description: 'Max seconds to wait for the local server to become healthy'
+    required: false
+    default: '30'
+  discord_webhook_url:
+    description: 'Optional Discord webhook URL to announce the live preview URL'
+    required: false
+    default: ''
+  comment_on_pr:
+    description: 'Post or update a sticky pull request comment with the live preview URL'
+    required: false
+    default: 'true'
+  github_token:
+    description: 'GitHub token used to post pull request comments'
+    required: false
+    default: '${{ github.token }}'
+
+outputs:
+  url:
+    description: 'Public HTTPS URL of the live preview tunnel'
+    value: ${{ steps.preview.outputs.url }}
+  provider:
+    description: 'Resolved tunnel provider used for this run'
+    value: ${{ steps.preview.outputs.provider }}
+  expires_at:
+    description: 'ISO-8601 UTC timestamp when the ephemeral live preview stops'
+    value: ${{ steps.preview.outputs.expires_at }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Live Preview Runner
+      id: preview
+      shell: bash
+      env:
+        INPUT_PORT: ${{ inputs.port }}
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_MINUTES: ${{ inputs.minutes }}
+        INPUT_PROVIDER: ${{ inputs.provider }}
+        INPUT_HEALTH_PATH: ${{ inputs.health_path }}
+        INPUT_STARTUP_TIMEOUT: ${{ inputs.startup_timeout_seconds }}
+        INPUT_DISCORD_WEBHOOK_URL: ${{ inputs.discord_webhook_url }}
+        INPUT_COMMENT_ON_PR: ${{ inputs.comment_on_pr }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      run: node "${{ github.action_path }}/runner.js"
